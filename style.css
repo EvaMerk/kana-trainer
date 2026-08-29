@@ -1,0 +1,332 @@
+:root {
+  --bg: #faf7f2;
+  --card: #ffffff;
+  --ink: #2b2724;
+  --muted: #8a8179;
+  --line: #e8e0d5;
+  --accent: #c1443b;
+  --accent-soft: #fdf0ee;
+  --ok: #3f7d5c;
+  --ok-soft: #edf6f1;
+  --bad: #c1443b;
+  --bad-soft: #fdf0ee;
+  --radius: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1817;
+    --card: #24211f;
+    --ink: #ede7e0;
+    --muted: #968c82;
+    --line: #363130;
+    --accent: #e0685e;
+    --accent-soft: #33221f;
+    --ok: #6fb28c;
+    --ok-soft: #1f2b25;
+    --bad: #e0685e;
+    --bad-soft: #33221f;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+header {
+  /* env(safe-area-inset-*) hält Inhalt aus Dynamic Island und Home-Indikator */
+  padding: calc(24px + env(safe-area-inset-top)) 20px 0;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 22px;
+  margin: 0 0 16px;
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.stats {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 18px;
+}
+.stats div { display: flex; flex-direction: column; }
+.stats strong { font-size: 24px; font-weight: 600; line-height: 1.1; }
+.stats span { font-size: 12px; color: var(--muted); }
+
+nav { display: flex; gap: 6px; border-bottom: 1px solid var(--line); }
+nav button {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+nav button.active { color: var(--ink); border-bottom-color: var(--accent); }
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.muted { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
+.hint { color: var(--muted); font-size: 13px; margin: 14px 0 0; }
+
+kbd {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 12px;
+  font-family: ui-monospace, monospace;
+}
+
+/* ------------------------------------------------------------------ Buttons */
+
+button.primary, button.ghost {
+  font: inherit;
+  font-size: 15px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background .12s, border-color .12s;
+}
+button.primary { background: var(--accent); color: #fff; }
+button.primary:hover { filter: brightness(1.07); }
+button.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+button.ghost:hover { border-color: var(--muted); }
+button.small { font-size: 13px; padding: 6px 12px; }
+button:disabled { opacity: .55; cursor: default; }
+
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+
+/* ------------------------------------------------------------------- Balken */
+
+.bar {
+  height: 6px;
+  background: var(--line);
+  border-radius: 99px;
+  overflow: hidden;
+  flex: 1;
+  margin: 10px 0 6px;
+}
+.bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 99px;
+  transition: width .25s ease;
+}
+
+/* --------------------------------------------------------------- Lektionen */
+
+.lesson {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  align-items: center;
+}
+.lesson:first-child { border-top: none; }
+.lesson.locked { opacity: .6; }
+.lesson-head { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.lesson-title { font-weight: 500; font-size: 15px; }
+.lesson-chars { font-size: 18px; color: var(--muted); letter-spacing: .08em; }
+.lesson-pct { font-size: 12px; color: var(--muted); grid-column: 1; }
+.lesson .bar { grid-column: 1 / -1; }
+.lesson button { grid-column: 2; grid-row: 3; }
+
+/* --------------------------------------------------------- Schwache Zeichen */
+
+.weak-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.weak-item {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  background: var(--bad-soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: help;
+}
+.weak-char { font-size: 24px; }
+.weak-romaji { font-size: 13px; color: var(--muted); }
+.weak-rate { font-size: 12px; color: var(--bad); font-variant-numeric: tabular-nums; }
+
+/* ------------------------------------------------------------------- Übung */
+
+.session-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.session-bar .bar { margin: 0; }
+.session-bar .muted { margin: 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.question { text-align: center; padding: 32px 20px; }
+
+.prompt-label {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.big-char {
+  font-size: 116px;
+  line-height: 1.1;
+  margin: 0 0 8px;
+  font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+  font-weight: 400;
+}
+.big-char.as-romaji { font-size: 64px; font-family: inherit; }
+.big-romaji { font-size: 40px; font-weight: 500; margin-bottom: 12px; }
+
+.mnemonic {
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--accent-soft);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 14px 0;
+  text-align: left;
+}
+.similar-warn { font-size: 14px; color: var(--muted); margin-bottom: 14px; }
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 24px;
+}
+button.option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+button.option:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); }
+.option-key {
+  font-size: 11px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0 5px;
+}
+.option-text {
+  font-size: 26px;
+  font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+}
+
+.type-form { margin-top: 24px; }
+.type-input {
+  font: inherit;
+  font-size: 24px;
+  text-align: center;
+  padding: 12px;
+  width: 200px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+}
+.type-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* ---------------------------------------------------------------- Feedback */
+
+.feedback {
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.feedback-head { font-size: 17px; font-weight: 600; margin-bottom: 10px; }
+.feedback.ok .feedback-head { color: var(--ok); }
+.feedback.bad .feedback-head { color: var(--bad); }
+.feedback-answer { display: flex; align-items: baseline; justify-content: center; gap: 10px; margin-bottom: 6px; }
+.fb-char { font-size: 44px; font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif; }
+.fb-eq { color: var(--muted); }
+.fb-romaji { font-size: 26px; font-weight: 500; }
+.feedback button { margin-top: 8px; }
+
+/* ------------------------------------------------------------ Lektionskarte */
+
+.study-card {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+.study-card:first-of-type { border-top: none; }
+.study-char {
+  font-size: 56px;
+  min-width: 76px;
+  text-align: center;
+  font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+}
+.study-body { flex: 1; }
+.study-romaji { font-size: 20px; font-weight: 600; margin-bottom: 3px; }
+.study-mnemonic { font-size: 15px; }
+.study-similar { font-size: 13px; color: var(--muted); margin-top: 5px; }
+
+/* ---------------------------------------------------------------- Schreiben */
+
+.write-prompt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.write-prompt-row .big-romaji { margin: 0; }
+.big-char.reveal { font-size: 72px; margin: 0; color: var(--accent); min-height: 80px; }
+
+#write-canvas {
+  width: 100%;
+  height: 300px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  touch-action: none;
+  cursor: crosshair;
+  margin: 12px 0;
+  display: block;
+}
+
+.danger-zone { text-align: right; padding: 12px 20px; }
+
+@media (max-width: 480px) {
+  .big-char { font-size: 88px; }
+  .stats { gap: 20px; }
+}

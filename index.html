@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<!-- viewport-fit=cover + safe-area-Padding im CSS: sonst verschwindet die
+     Kopfzeile unter der iPhone-Dynamic-Island -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kana-Trainer</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c1443b">
+
+<!-- iOS: als eigenständige App vom Home-Bildschirm starten -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Kana">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>かな Kana-Trainer</h1>
+  <div class="stats">
+    <div><strong id="stat-streak">0</strong><span>Tage Streak</span></div>
+    <div><strong id="stat-due">0</strong><span>fällig</span></div>
+    <div><strong id="stat-new">0</strong><span>neu</span></div>
+  </div>
+  <nav>
+    <button data-view="home" class="active">Übersicht</button>
+    <button data-view="write">Schreiben</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ------------------------------------------------------------- Übersicht -->
+  <section id="view-home" class="view">
+    <div class="card hero">
+      <h2>Heutige Runde</h2>
+      <p id="session-hint" class="muted"></p>
+      <div class="btn-row">
+        <button id="btn-start" class="primary">Üben starten</button>
+        <button id="btn-weak" class="ghost">Nur Problemzeichen</button>
+        <button id="btn-free" class="ghost">Freies Üben</button>
+      </div>
+      <p class="hint">Tipp: Bei Auswahlfragen kannst du <kbd>1</kbd>–<kbd>4</kbd> drücken, <kbd>Enter</kbd> geht weiter.</p>
+    </div>
+
+    <div class="card">
+      <h2>Wo es gerade hakt</h2>
+      <div id="weak-list" class="weak-grid"></div>
+    </div>
+
+    <div class="card">
+      <h2>Lektionen</h2>
+      <p class="muted">Schalte eine neue Reihe erst frei, wenn die vorherige bei ca. 80 % steht.</p>
+      <div id="lesson-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>Fortschritt sichern</h2>
+      <p class="muted">Dein Lernstand liegt nur in diesem Browser. Sicherungsdatei ab und zu speichern — dann kannst du ihn auf ein anderes Gerät holen oder nach einem Datenverlust zurückspielen.</p>
+      <div class="btn-row">
+        <button id="btn-export" class="ghost">Sicherung speichern</button>
+        <button id="btn-import" class="ghost">Sicherung laden</button>
+        <input id="import-file" type="file" accept="application/json,.json" hidden>
+      </div>
+      <p id="backup-msg" class="hint"></p>
+    </div>
+
+    <div class="card danger-zone">
+      <button id="btn-reset" class="ghost small">Fortschritt zurücksetzen</button>
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------------- Übung -->
+  <section id="view-session" class="view" hidden>
+    <div class="session-bar">
+      <div class="bar"><div id="progress-fill" class="bar-fill"></div></div>
+      <span id="session-count" class="muted"></span>
+      <button id="btn-quit" class="ghost small">Abbrechen</button>
+    </div>
+    <div id="question" class="card question"></div>
+  </section>
+
+  <!-- ------------------------------------------------------------- Lektion -->
+  <section id="view-lesson" class="view" hidden>
+    <div id="lesson-detail" class="card"></div>
+  </section>
+
+  <!-- ----------------------------------------------------------- Schreiben -->
+  <section id="view-write" class="view" hidden>
+    <div class="card">
+      <h2>Schreibübung</h2>
+      <p class="muted">Schreib das Zeichen zu dieser Umschrift mit der Maus oder dem Trackpad — dann aufdecken und vergleichen.</p>
+      <div class="write-prompt-row">
+        <div id="write-prompt" class="big-romaji"></div>
+        <div id="write-reveal" class="big-char reveal"></div>
+      </div>
+      <canvas id="write-canvas"></canvas>
+      <div id="write-mnemonic" class="mnemonic"></div>
+      <div class="btn-row">
+        <button id="write-show" class="primary">Aufdecken</button>
+        <button id="write-clear" class="ghost">Löschen</button>
+        <button id="write-next" class="ghost">Nächstes Zeichen</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="kana-data.js"></script>
+<script src="srs.js"></script>
+<script src="app.js"></script>
+<script>
+  // Offline-Fähigkeit. Läuft nur über https bzw. localhost — beim Öffnen
+  // per Doppelklick (file://) wird das hier still übersprungen.
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => { /* nicht schlimm */ });
+    });
+  }
+</script>
+</body>
+</html>
