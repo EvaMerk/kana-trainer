@@ -13,6 +13,23 @@ python3 -m http.server 8777 --directory trainer
 
 Dann im Browser [http://localhost:8777](http://localhost:8777) öffnen.
 
+## Aufs iPhone bringen
+
+Einmal veröffentlichen (im Terminal, im Ordner `trainer/`):
+
+```sh
+gh repo create kana-trainer --public --source=. --push
+gh api -X POST repos/EvaMerk/kana-trainer/pages \
+  -f 'source[branch]=main' -f 'source[path]=/'
+```
+
+Nach ein bis zwei Minuten liegt die App unter
+**https://evamerk.github.io/kana-trainer/**
+
+Auf dem iPhone in **Safari** öffnen (nicht Chrome — nur Safari darf auf iOS Apps auf den Home-Bildschirm legen), dann Teilen-Symbol → **Zum Home-Bildschirm**. Danach startet sie wie eine normale App, ohne Browserleiste, und funktioniert auch ohne Netz.
+
+Änderungen später ausspielen: `git add -A && git commit -m "..." && git push`.
+
 ## Wie es funktioniert
 
 **Spaced Repetition.** Jedes Zeichen sitzt in einer „Box". Richtig beantwortet steigt es eine Box auf und kommt später wieder dran, falsch beantwortet fällt es auf Box 0 zurück und kommt bald wieder. Die Abstände: 1 Tag → 2 → 4 → 7 → 14 → 30.
