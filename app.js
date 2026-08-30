@@ -35,6 +35,7 @@ function renderHeader() {
 
 function renderHome() {
   renderHeader();
+  renderCourseMode();
 
   const due = dueChars().length;
   const fresh = Math.min(newChars().length, Store.data.settings.newPerSession);
@@ -68,6 +69,36 @@ function renderHome() {
   }
 
   renderLessonList();
+}
+
+/* Schalter „Nur meine Kurszeichen" samt Anzeige der betroffenen Zeichen */
+function renderCourseMode() {
+  const toggle = $('#toggle-course');
+  const list = $('#course-chars');
+  const verfuegbar = typeof COURSE_CHARS !== 'undefined' && COURSE_CHARS.length;
+
+  // Ohne kurs.js gibt es nichts zu filtern — Schalter ausblenden.
+  toggle.closest('.switch').hidden = !verfuegbar;
+  if (!verfuegbar) { list.innerHTML = ''; return; }
+
+  toggle.checked = Boolean(Store.data.settings.courseOnly);
+
+  list.innerHTML = '';
+  list.hidden = !toggle.checked;
+  if (toggle.checked) {
+    COURSE_CHARS.forEach(ch => {
+      const eintrag = CHAR_MAP[ch];
+      const chip = el('span', 'course-chip', ch);
+      if (eintrag) chip.title = `${eintrag.r} — ${eintrag.m}`;
+      list.append(chip);
+    });
+  }
+
+  const note = $('#lesson-note');
+  note.textContent = toggle.checked
+    ? 'Im Kursmodus inaktiv: geübt wird nur die Auswahl oben. Schalter ausmachen, um nach Reihen zu lernen.'
+    : 'Schalte eine neue Reihe erst frei, wenn die vorherige bei ca. 80 % steht.';
+  $('#lesson-list').classList.toggle('inactive', toggle.checked);
 }
 
 function renderLessonList() {
@@ -173,18 +204,33 @@ function distractors(target, count) {
   const picked = [];
   const seen = new Set([target.r]);
 
+  const pool = distractorPool(target.script);
+  const erlaubt = new Set(pool.map(c => c.c));
+
   // Optisch ähnliche Zeichen zuerst — das trainiert genau die Verwechslungen.
-  const similar = shuffle((target.s || []).map(ch => CHAR_MAP[ch]).filter(Boolean));
-  for (const c of similar) {
+  // Im Kursmodus nur solche, die auch im Kurs vorkamen: sonst stünden auf
+  // einmal Zeichen zur Auswahl, die sie noch nie gesehen hat.
+  let similar = (target.s || []).map(ch => CHAR_MAP[ch]).filter(Boolean);
+  if (courseModeActive()) similar = similar.filter(c => erlaubt.has(c.c));
+
+  for (const c of shuffle(similar)) {
     if (picked.length >= count) break;
     if (!seen.has(c.r)) { picked.push(c); seen.add(c.r); }
   }
 
-  for (const c of shuffle(distractorPool(target.script))) {
+  for (const c of shuffle(pool)) {
     if (picked.length >= count) break;
     if (!seen.has(c.r)) { picked.push(c); seen.add(c.r); }
   }
   return picked;
+}
+
+/* Verwechslungshinweise, die für sie gerade Sinn ergeben. Im Kursmodus
+ * bringt „ähnlich zu ほ" nichts, wenn ほ noch nie im Kurs vorkam. */
+function relevantSimilar(char) {
+  const alle = char.s || [];
+  if (!courseModeActive()) return alle;
+  return alle.filter(ch => COURSE_CHARS.includes(ch));
 }
 
 function nextQuestion() {
@@ -210,8 +256,9 @@ function renderIntro(char, box) {
   box.append(el('div', 'big-char', char.c));
   box.append(el('div', 'big-romaji', char.r));
   box.append(el('div', 'mnemonic', char.m));
-  if (char.s && char.s.length) {
-    box.append(el('div', 'similar-warn', 'Achtung, ähnlich: ' + char.s.join(' ')));
+  const aehnlich = relevantSimilar(char);
+  if (aehnlich.length) {
+    box.append(el('div', 'similar-warn', 'Achtung, ähnlich: ' + aehnlich.join(' ')));
   }
 
   const btn = el('button', 'primary', 'Verstanden — abfragen');
@@ -285,8 +332,9 @@ function answer(char, correct, box, given) {
     fb.append(line);
     if (given) fb.append(el('div', 'muted', `Du hattest „${given}" getippt.`));
     fb.append(el('div', 'mnemonic', char.m));
-    if (char.s && char.s.length) {
-      fb.append(el('div', 'similar-warn', 'Ähnlich, aber anders: ' + char.s.join(' ')));
+    const aehnlich = relevantSimilar(char);
+    if (aehnlich.length) {
+      fb.append(el('div', 'similar-warn', 'Ähnlich, aber anders: ' + aehnlich.join(' ')));
     }
     // Falsch beantwortet -> später in dieser Runde nochmal
     session.queue.push(char);
@@ -423,7 +471,7 @@ function importProgress(file) {
       const count = Object.keys(incoming.cards).length;
       if (!confirm(`Sicherung mit ${count} geübten Zeichen gefunden. Deinen aktuellen Stand damit ersetzen?`)) return;
 
-      Store.data = { ...Store.defaults(), ...incoming };
+      Store.data = Store.merge(incoming);
       Store.save();
       renderHome();
       backupMsg(`${count} Zeichen wiederhergestellt.`);
@@ -472,6 +520,12 @@ function init() {
   $('#btn-free').onclick = startFreePractice;
   $('#btn-weak').onclick = startWeakPractice;
   $('#btn-quit').onclick = () => { session = null; renderHome(); show('home'); };
+
+  $('#toggle-course').onchange = e => {
+    Store.data.settings.courseOnly = e.target.checked;
+    Store.save();
+    renderHome();
+  };
 
   $('#btn-export').onclick = exportProgress;
   $('#btn-import').onclick = () => $('#import-file').click();

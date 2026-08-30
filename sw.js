@@ -8,6 +8,7 @@ const ASSETS = [
   './index.html',
   './style.css',
   './kana-data.js',
+  './kurs.js',
   './srs.js',
   './app.js',
   './manifest.json',

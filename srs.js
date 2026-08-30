@@ -18,20 +18,35 @@ const Store = {
       cards: {},              // zeichen -> { box, due, correct, wrong, seen }
       unlockedLessons: ['h-a'], // mit der a-Reihe geht es los
       history: {},            // 'YYYY-MM-DD' -> Anzahl beantworteter Karten
-      settings: { newPerSession: 5, sessionLength: 20 },
+      settings: { newPerSession: 5, sessionLength: 20, courseOnly: true },
     };
   },
 
   load() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      this.data = raw ? { ...this.defaults(), ...JSON.parse(raw) } : this.defaults();
+      this.data = raw ? this.merge(JSON.parse(raw)) : this.defaults();
     } catch {
       // localStorage kann blockiert sein (z. B. Safari bei file://) — dann
       // läuft der Trainer eben ohne Fortschrittsspeicherung weiter.
       this.data = this.defaults();
     }
     return this.data;
+  },
+
+  /* Gespeicherten Stand mit den Standardwerten zusammenführen.
+   *
+   * settings muss dabei eigens verschmolzen werden: ein flaches Überschreiben
+   * würde das ganze settings-Objekt durch den alten Stand ersetzen, sodass
+   * später hinzugekommene Einstellungen (z. B. courseOnly) fehlen und als
+   * "aus" gelten. */
+  merge(gespeichert) {
+    const d = this.defaults();
+    return {
+      ...d,
+      ...gespeichert,
+      settings: { ...d.settings, ...(gespeichert && gespeichert.settings) },
+    };
   },
 
   save() {
@@ -57,8 +72,23 @@ function cardFor(char) {
   return Store.data.cards[char];
 }
 
-/* Zeichen aus den freigeschalteten Lektionen */
+/* Kursmodus: nur die Zeichen üben, die laut kursmaterial/ schon dran waren.
+ * Die Liste steht in kurs.js und wird von kurs-aktualisieren.py erzeugt. */
+function courseModeActive() {
+  return Boolean(
+    Store.data.settings.courseOnly &&
+    typeof COURSE_CHARS !== 'undefined' &&
+    COURSE_CHARS.length
+  );
+}
+
+/* Zeichen, die gerade geübt werden — im Kursmodus die Kursauswahl,
+ * sonst alles aus den freigeschalteten Lektionen. */
 function unlockedChars() {
+  if (courseModeActive()) {
+    const set = new Set(COURSE_CHARS);
+    return ALL_CHARS.filter(c => set.has(c.c));
+  }
   const set = new Set(Store.data.unlockedLessons);
   return ALL_CHARS.filter(c => set.has(c.lesson));
 }

@@ -30,6 +30,20 @@ Auf dem iPhone in **Safari** öffnen (nicht Chrome — nur Safari darf auf iOS A
 
 Änderungen später ausspielen: `git add -A && git commit -m "..." && git push`.
 
+## Kursmodus
+
+Standardmäßig übt der Trainer **nur die Zeichen, die im Kurs schon dran waren**. Welche das sind, steht in `kurs.js` und wird aus den Übungsblättern in `kursmaterial/` abgeleitet.
+
+Neue Blätter bekommen? Einfach in `kursmaterial/` legen und im Projektordner ausführen:
+
+```sh
+python3 kurs-aktualisieren.py
+```
+
+Das Skript liest die Dateinamen (`50hiragana-su.pdf` → す) und schreibt `kurs.js` neu. Zeichen ohne eigenes Blatt kannst du im Skript unter `ZUSAETZLICH` eintragen.
+
+Den Schalter „Nur meine Kurszeichen" auf der Startseite ausmachen, um stattdessen nach den klassischen Reihen zu lernen. Im Kursmodus sind auch die Antwortmöglichkeiten und die Ähnlichkeitshinweise auf die Kursauswahl beschränkt — es taucht nie ein Zeichen auf, das im Kurs noch nicht dran war.
+
 ## Wie es funktioniert
 
 **Spaced Repetition.** Jedes Zeichen sitzt in einer „Box". Richtig beantwortet steigt es eine Box auf und kommt später wieder dran, falsch beantwortet fällt es auf Box 0 zurück und kommt bald wieder. Die Abstände: 1 Tag → 2 → 4 → 7 → 14 → 30.

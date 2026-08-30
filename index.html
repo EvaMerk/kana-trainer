@@ -39,6 +39,13 @@
   <section id="view-home" class="view">
     <div class="card hero">
       <h2>Heutige Runde</h2>
+
+      <label class="switch">
+        <input type="checkbox" id="toggle-course" checked>
+        <span>Nur meine Kurszeichen</span>
+      </label>
+      <div id="course-chars" class="course-chars"></div>
+
       <p id="session-hint" class="muted"></p>
       <div class="btn-row">
         <button id="btn-start" class="primary">Üben starten</button>
@@ -55,7 +62,7 @@
 
     <div class="card">
       <h2>Lektionen</h2>
-      <p class="muted">Schalte eine neue Reihe erst frei, wenn die vorherige bei ca. 80 % steht.</p>
+      <p id="lesson-note" class="muted">Schalte eine neue Reihe erst frei, wenn die vorherige bei ca. 80 % steht.</p>
       <div id="lesson-list"></div>
     </div>
 
@@ -112,6 +119,7 @@
 </main>
 
 <script src="kana-data.js"></script>
+<script src="kurs.js"></script>
 <script src="srs.js"></script>
 <script src="app.js"></script>
 <script>
