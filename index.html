@@ -29,6 +29,7 @@
   </div>
   <nav>
     <button data-view="home" class="active">Übersicht</button>
+    <button data-view="words">Wörter</button>
     <button data-view="write">Schreiben</button>
   </nav>
 </header>
@@ -97,6 +98,25 @@
     <div id="lesson-detail" class="card"></div>
   </section>
 
+  <!-- --------------------------------------------------------------- Wörter -->
+  <section id="view-words" class="view" hidden>
+    <div class="card">
+      <h2>Wörter lesen</h2>
+      <p id="words-hint" class="muted"></p>
+      <div id="words-panel">
+        <div id="word-display" class="big-char word"></div>
+        <form id="word-form" class="type-form" autocomplete="off">
+          <input id="word-input" class="type-input wide" type="text"
+                 inputmode="latin" autocapitalize="off" autocomplete="off"
+                 spellcheck="false" placeholder="Umschrift tippen">
+          <button type="submit" class="primary">Prüfen</button>
+        </form>
+        <div id="word-feedback"></div>
+        <p class="hint">Ob du <kbd>shi</kbd> oder <kbd>si</kbd> schreibst, ist egal — beides zählt.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ----------------------------------------------------------- Schreiben -->
   <section id="view-write" class="view" hidden>
     <div class="card">
@@ -120,6 +140,7 @@
 
 <script src="kana-data.js"></script>
 <script src="kurs.js"></script>
+<script src="woerter.js"></script>
 <script src="srs.js"></script>
 <script src="app.js"></script>
 <script>

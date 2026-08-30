@@ -44,6 +44,16 @@ Das Skript liest die Dateinamen (`50hiragana-su.pdf` → す) und schreibt `kurs
 
 Den Schalter „Nur meine Kurszeichen" auf der Startseite ausmachen, um stattdessen nach den klassischen Reihen zu lernen. Im Kursmodus sind auch die Antwortmöglichkeiten und die Ähnlichkeitshinweise auf die Kursauswahl beschränkt — es taucht nie ein Zeichen auf, das im Kurs noch nicht dran war.
 
+## Lesemodus („Wörter")
+
+Zeigt ein echtes japanisches Wort in Hiragana, du tippst die Umschrift. Es erscheinen **nur Wörter, deren Zeichen du alle schon kannst** — die Liste wächst also automatisch mit, sobald neue Zeichen dazukommen.
+
+Hepburn und Kunrei gelten beide (`shi` wie `si`, `tsu` wie `tu`). Lange Vokale werden bewusst *nicht* zusammengezogen, sonst wären めいし (*meishi*, Visitenkarte) und めし (*meshi*, Essen) nicht mehr zu unterscheiden.
+
+Bei einem Fehler wird das Wort in seine Zeichen zerlegt, damit du siehst, an welcher Stelle es hakte.
+
+Wörter stehen in `woerter.js`. Beim Ergänzen: keine kleinen Kana (っ ゃ ゅ ょ) und kein Dehnungsstrich verwenden — die kennt der Trainer noch nicht als eigene Zeichen, solche Wörter würden nie erscheinen.
+
 ## Wie es funktioniert
 
 **Spaced Repetition.** Jedes Zeichen sitzt in einer „Box". Richtig beantwortet steigt es eine Box auf und kommt später wieder dran, falsch beantwortet fällt es auf Box 0 zurück und kommt bald wieder. Die Abstände: 1 Tag → 2 → 4 → 7 → 14 → 30.

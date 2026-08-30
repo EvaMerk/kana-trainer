@@ -373,6 +373,101 @@ function finishSession() {
   session = null;
 }
 
+// ---------------------------------------------------------------- Lesemodus
+
+let currentWord = null;
+
+function renderWords() {
+  const pool = availableWords();
+  const hint = $('#words-hint');
+  const panel = $('#words-panel');
+
+  if (!pool.length) {
+    panel.hidden = true;
+    hint.textContent = 'Mit deinen aktuellen Zeichen lässt sich noch kein ganzes Wort bilden. Sobald ein paar mehr dazukommen, tauchen hier automatisch welche auf.';
+    return;
+  }
+
+  panel.hidden = false;
+  updateWordsHint();
+  nextWord();
+}
+
+function updateWordsHint() {
+  const pool = availableWords();
+  const geuebt = pool.filter(e => Store.data.words[e.w]).length;
+  $('#words-hint').textContent =
+    `${pool.length} Wörter kannst du gerade vollständig lesen — ${geuebt} davon schon geübt.`;
+}
+
+function nextWord() {
+  currentWord = pickWord(currentWord && currentWord.w);
+  if (!currentWord) return;
+
+  $('#word-display').textContent = currentWord.w;
+  $('#word-feedback').innerHTML = '';
+
+  const input = $('#word-input');
+  input.value = '';
+  input.disabled = false;
+  $('#word-form').querySelector('button').disabled = false;
+  input.focus();
+}
+
+function checkWord() {
+  if (!currentWord) return;
+  const input = $('#word-input');
+  const eingabe = input.value.trim();
+  if (!eingabe) return;
+
+  const richtig = wordAnswerCorrect(currentWord, eingabe);
+  gradeWord(currentWord.w, richtig);
+  updateWordsHint();
+
+  input.disabled = true;
+  $('#word-form').querySelector('button').disabled = true;
+
+  const fb = $('#word-feedback');
+  fb.innerHTML = '';
+  const box = el('div', 'feedback ' + (richtig ? 'ok' : 'bad'));
+  box.append(el('div', 'feedback-head', richtig ? 'Richtig gelesen!' : 'Noch nicht'));
+
+  if (!richtig) {
+    // Wort über Umschrift statt nebeneinander: mehrsilbige Wörter passen
+    // sonst auf schmalen Displays nicht in eine Zeile.
+    const zeile = el('div', 'feedback-answer stacked');
+    zeile.append(el('span', 'fb-char fb-word', currentWord.w));
+    zeile.append(el('span', 'fb-romaji', currentWord.r));
+    box.append(zeile);
+    box.append(el('div', 'muted', `Du hattest „${eingabe}" getippt.`));
+    box.append(zeichenAufschluesselung(currentWord));
+  }
+
+  const bedeutung = el('div', 'mnemonic');
+  bedeutung.append(el('strong', null, currentWord.d));
+  if (currentWord.k) bedeutung.append(el('span', 'word-kanji', ' — mit Kanji: ' + currentWord.k));
+  box.append(bedeutung);
+
+  const weiter = el('button', 'primary', 'Nächstes Wort');
+  weiter.onclick = nextWord;
+  box.append(weiter);
+
+  fb.append(box);
+  weiter.focus();
+}
+
+/* Wort in seine Zeichen zerlegen — zeigt, an welcher Stelle es hakte */
+function zeichenAufschluesselung(eintrag) {
+  const zeile = el('div', 'word-breakdown');
+  [...eintrag.w].forEach(z => {
+    const teil = el('span', 'breakdown-part');
+    teil.append(el('span', 'breakdown-char', z));
+    teil.append(el('span', 'breakdown-romaji', CHAR_MAP[z] ? CHAR_MAP[z].r : '?'));
+    zeile.append(teil);
+  });
+  return zeile;
+}
+
 // ------------------------------------------------------------- Schreibübung
 
 function initWriting() {
@@ -512,9 +607,12 @@ function init() {
   document.querySelectorAll('nav button').forEach(b => {
     b.onclick = () => {
       if (b.dataset.view === 'home') renderHome();
+      if (b.dataset.view === 'words') renderWords();
       show(b.dataset.view);
     };
   });
+
+  $('#word-form').onsubmit = e => { e.preventDefault(); checkWord(); };
 
   $('#btn-start').onclick = () => startSession();
   $('#btn-free').onclick = startFreePractice;

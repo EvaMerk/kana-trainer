@@ -18,6 +18,7 @@ const Store = {
       cards: {},              // zeichen -> { box, due, correct, wrong, seen }
       unlockedLessons: ['h-a'], // mit der a-Reihe geht es los
       history: {},            // 'YYYY-MM-DD' -> Anzahl beantworteter Karten
+      words: {},              // wort -> { seen, correct }
       settings: { newPerSession: 5, sessionLength: 20, courseOnly: true },
     };
   },
@@ -172,6 +173,67 @@ function unlockLesson(id) {
     Store.data.unlockedLessons.push(id);
     Store.save();
   }
+}
+
+// ------------------------------------------------------------- Lesemodus
+
+/* Wörter, die vollständig aus bereits gelernten Zeichen bestehen. */
+function availableWords() {
+  if (typeof WORDS === 'undefined') return [];
+  const koennen = new Set(unlockedChars().map(c => c.c));
+  return WORDS.filter(eintrag => [...eintrag.w].every(z => koennen.has(z)));
+}
+
+/* Umschrift auf eine Vergleichsform bringen.
+ *
+ * Hepburn und Kunrei sollen beide gelten (shi/si, chi/ti, tsu/tu, fu/hu).
+ * Lange Vokale werden bewusst NICHT zusammengezogen: sonst wären めいし
+ * (meishi, Visitenkarte) und めし (meshi, Essen) nicht mehr zu unterscheiden
+ * — beide stehen in ihrer aktuellen Auswahl. */
+function normalizeRomaji(eingabe) {
+  return String(eingabe)
+    .toLowerCase()
+    .trim()
+    .replace(/[\s'’´`_-]/g, '')
+    .replace(/ō/g, 'ou').replace(/ū/g, 'uu').replace(/ā/g, 'aa')
+    .replace(/ī/g, 'ii').replace(/ē/g, 'ee')
+    .replace(/tsu/g, 'tu')
+    .replace(/shi/g, 'si')
+    .replace(/chi/g, 'ti')
+    .replace(/fu/g, 'hu')
+    .replace(/ji/g, 'zi');
+}
+
+function wordAnswerCorrect(eintrag, eingabe) {
+  return normalizeRomaji(eingabe) === normalizeRomaji(eintrag.r);
+}
+
+function gradeWord(wort, richtig) {
+  const s = Store.data.words[wort] || { seen: 0, correct: 0 };
+  s.seen += 1;
+  if (richtig) s.correct += 1;
+  Store.data.words[wort] = s;
+  Store.save();
+  return s;
+}
+
+/* Nächstes Wort: erst ungesehene, dann die mit den meisten Fehlern. */
+function pickWord(zuletzt) {
+  let pool = availableWords();
+  if (!pool.length) return null;
+  if (pool.length > 1 && zuletzt) pool = pool.filter(e => e.w !== zuletzt);
+
+  const ungesehen = pool.filter(e => !Store.data.words[e.w]);
+  if (ungesehen.length) return ungesehen[Math.floor(Math.random() * ungesehen.length)];
+
+  const gewichtet = pool.map(e => {
+    const s = Store.data.words[e.w];
+    return { e, fehlerquote: 1 - s.correct / s.seen };
+  }).sort((a, b) => b.fehlerquote - a.fehlerquote);
+
+  // Aus der schwächeren Hälfte ziehen, damit es nicht monoton wird
+  const haelfte = gewichtet.slice(0, Math.max(1, Math.ceil(gewichtet.length / 2)));
+  return haelfte[Math.floor(Math.random() * haelfte.length)].e;
 }
 
 /* Lernstreak: aufeinanderfolgende Tage mit mindestens einer Antwort */

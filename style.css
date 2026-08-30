@@ -278,6 +278,52 @@ button.option:hover:not(:disabled) { border-color: var(--accent); background: va
   font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
 }
 
+/* ---------------------------------------------------------------- Lesemodus */
+
+.big-char.word {
+  font-size: 64px;
+  letter-spacing: .04em;
+  margin: 18px 0 6px;
+  text-align: center;
+  word-break: break-all;
+}
+
+#view-words .type-form {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.type-input.wide { width: 240px; font-size: 20px; text-align: center; }
+
+.word-kanji { color: var(--muted); font-size: 14px; }
+
+.word-breakdown {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 4px;
+}
+.breakdown-part {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 11px;
+  min-width: 44px;
+}
+.breakdown-char {
+  font-size: 27px;
+  line-height: 1.1;
+  font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+}
+.breakdown-romaji { font-size: 12px; color: var(--muted); }
+
 .type-form { margin-top: 24px; }
 .type-input {
   font: inherit;
@@ -302,8 +348,23 @@ button.option:hover:not(:disabled) { border-color: var(--accent); background: va
 .feedback-head { font-size: 17px; font-weight: 600; margin-bottom: 10px; }
 .feedback.ok .feedback-head { color: var(--ok); }
 .feedback.bad .feedback-head { color: var(--bad); }
-.feedback-answer { display: flex; align-items: baseline; justify-content: center; gap: 10px; margin-bottom: 6px; }
-.fb-char { font-size: 44px; font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif; }
+/* flex-wrap + nowrap am Zeichen: bei mehrsilbigen Wörtern soll die ZEILE
+ * umbrechen, nicht das Wort selbst („すてま / す" sah kaputt aus). */
+.feedback-answer {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.fb-char {
+  font-size: 44px;
+  white-space: nowrap;
+  font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+}
+.fb-char.fb-word { font-size: 38px; }
+.feedback-answer.stacked { flex-direction: column; gap: 2px; }
 .fb-eq { color: var(--muted); }
 .fb-romaji { font-size: 26px; font-weight: 500; }
 .feedback button { margin-top: 8px; }
