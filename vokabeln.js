@@ -1,0 +1,37 @@
+/* Automatisch erzeugt von vokabeln-aktualisieren.py — nicht von Hand ändern.
+ *
+ * Quelle: kursmaterial/Vokabeln/
+ * Stand: 30 Vokabeln aus 2 Datei(en). */
+
+const VOCAB = [
+  { kana: 'れい、ぜろ', romaji: 'rei, zero', deutsch: 'null', kanji: '零', quelle: 'Zahlen_0-bis-10.tsv' },
+  { kana: 'いち', romaji: 'ichi', deutsch: 'eins', kanji: '一', quelle: 'Zahlen_0-bis-10.tsv' },
+  { kana: 'に', romaji: 'ni', deutsch: 'zwei', kanji: '二', quelle: 'Zahlen_0-bis-10.tsv' },
+  { kana: 'さん', romaji: 'san', deutsch: 'drei', kanji: '三', quelle: 'Zahlen_0-bis-10.tsv' },
+  { kana: 'し、よん', romaji: 'shi, yon', deutsch: 'vier', kanji: '四', quelle: 'Zahlen_0-bis-10.tsv' },
+  { kana: 'ご', romaji: 'go', deutsch: 'fünf', kanji: '五', quelle: 'Zahlen_0-bis-10.tsv' },
+  { kana: 'ろく', romaji: 'roku', deutsch: 'sechs', kanji: '六', quelle: 'Zahlen_0-bis-10.tsv' },
+  { kana: 'しち、なな', romaji: 'shichi, nana', deutsch: 'sieben', kanji: '七', quelle: 'Zahlen_0-bis-10.tsv' },
+  { kana: 'はち', romaji: 'hachi', deutsch: 'acht', kanji: '八', quelle: 'Zahlen_0-bis-10.tsv' },
+  { kana: 'きゅう、く', romaji: 'kyuu, ku', deutsch: 'neun', kanji: '九', quelle: 'Zahlen_0-bis-10.tsv' },
+  { kana: 'じゅう', romaji: 'juu', deutsch: 'zehn', kanji: '十', quelle: 'Zahlen_0-bis-10.tsv' },
+  { kana: 'じゅういち', romaji: 'juuichi', deutsch: 'elf', kanji: '十一', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'じゅうに', romaji: 'juuni', deutsch: 'zwölf', kanji: '十二', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'じゅうさん', romaji: 'juusan', deutsch: 'dreizehn', kanji: '十三', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'じゅうし、じゅうよん', romaji: 'juushi, juuyon', deutsch: 'vierzehn', kanji: '十四', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'じゅうご', romaji: 'juugo', deutsch: 'fünfzehn', kanji: '十五', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'じゅうろく', romaji: 'juuroku', deutsch: 'sechzehn', kanji: '十六', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'じゅうしち、じゅうなな', romaji: 'juushichi, juunana', deutsch: 'siebzehn', kanji: '十七', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'じゅうはち', romaji: 'juuhachi', deutsch: 'achtzehn', kanji: '十八', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'じゅうきゅう、じゅうく', romaji: 'juukyuu, juuku', deutsch: 'neunzehn', kanji: '十九', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'にじゅう', romaji: 'nijuu', deutsch: 'zwanzig', kanji: '二十', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'にじゅういち', romaji: 'nijuuichi', deutsch: 'einundzwanzig', kanji: '二十一', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'にじゅうに', romaji: 'nijuuni', deutsch: 'zweiundzwanzig', kanji: '二十二', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'にじゅうさん', romaji: 'nijuusan', deutsch: 'dreiundzwanzig', kanji: '二十三', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'にじゅうし、にじゅうよん', romaji: 'nijuushi, nijuuyon', deutsch: 'vierundzwanzig', kanji: '二十四', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'にじゅうご', romaji: 'nijuugo', deutsch: 'fünfundzwanzig', kanji: '二十五', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'にじゅうろく', romaji: 'nijuuroku', deutsch: 'sechsundzwanzig', kanji: '二十六', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'にじゅうしち、にじゅうなな', romaji: 'nijuushichi, nijuunana', deutsch: 'siebenundzwanzig', kanji: '二十七', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'にじゅうはち', romaji: 'nijuuhachi', deutsch: 'achtundzwanzig', kanji: '二十八', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'にじゅうきゅう、にじゅうく', romaji: 'nijuukyuu, nijuuku', deutsch: 'neunundzwanzig', kanji: '二十九', quelle: 'Zahlen_11-99.tsv' },
+];

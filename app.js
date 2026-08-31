@@ -468,6 +468,103 @@ function zeichenAufschluesselung(eintrag) {
   return zeile;
 }
 
+// -------------------------------------------------------- Vokabeltrainer
+
+let currentVocab = null;
+let currentDirection = 'jp-de';
+
+function renderVocab() {
+  const stats = vocabStats();
+  const panel = $('#vocab-panel');
+
+  if (!stats.gesamt) {
+    panel.hidden = true;
+    $('#vocab-hint').textContent =
+      'Noch keine Vokabeln vorhanden. Leg Fotos oder Listen in kursmaterial/Vokabeln/ ab und lass „vokabeln-aktualisieren.py" laufen.';
+    return;
+  }
+
+  panel.hidden = false;
+  updateVocabHint();
+  nextVocabCard();
+}
+
+function updateVocabHint() {
+  const s = vocabStats();
+  const teile = [`${s.gesamt} Vokabeln`];
+  if (s.faellig) teile.push(`${s.faellig} fällig`);
+  if (s.neu) teile.push(`${s.neu} neu`);
+  teile.push(`${s.sicher} sitzen sicher`);
+  $('#vocab-hint').textContent = teile.join(' · ');
+}
+
+function nextVocabCard() {
+  currentVocab = nextVocab(currentVocab && vocabId(currentVocab));
+  if (!currentVocab) return;
+
+  const id = vocabId(currentVocab);
+  currentDirection = vocabDirection(id);
+
+  $('#vocab-direction').textContent =
+    currentDirection === 'jp-de' ? 'Was heißt das?' : 'Wie heißt das auf Japanisch?';
+
+  const front = $('#vocab-front');
+  const back = $('#vocab-back');
+  front.innerHTML = '';
+  back.innerHTML = '';
+  back.hidden = true;
+
+  if (currentDirection === 'jp-de') {
+    front.append(japanischeSeite(currentVocab));
+    back.append(deutscheSeite(currentVocab));
+  } else {
+    front.append(deutscheSeite(currentVocab));
+    back.append(japanischeSeite(currentVocab));
+  }
+
+  $('#vocab-actions').hidden = false;
+  $('#vocab-grade').hidden = true;
+  $('#vocab-flip').focus();
+}
+
+/* Schriftgröße nach Länge staffeln, damit nichts über mehrere Zeilen bricht */
+function laengenKlasse(text, mittel, gross) {
+  if (text.length > gross) return ' sehr-lang';
+  if (text.length > mittel) return ' lang';
+  return '';
+}
+
+function japanischeSeite(v) {
+  const box = el('div', 'vocab-jp');
+  if (v.kana) box.append(el('div', 'vocab-kana' + laengenKlasse(v.kana, 7, 12), v.kana));
+  if (v.kanji) box.append(el('div', 'vocab-kanji', v.kanji));
+  if (v.romaji) box.append(el('div', 'vocab-romaji', v.romaji));
+  return box;
+}
+
+function deutscheSeite(v) {
+  const box = el('div', 'vocab-de');
+  box.append(el('div', 'vocab-deutsch' + laengenKlasse(v.deutsch, 14, 99), v.deutsch));
+  if (v.notiz) box.append(el('div', 'muted', v.notiz));
+  return box;
+}
+
+function flipVocab() {
+  if (!currentVocab) return;
+  $('#vocab-back').hidden = false;
+  $('#vocab-actions').hidden = true;
+  $('#vocab-grade').hidden = false;
+  $('#vocab-known').focus();
+}
+
+function gradeVocabCard(richtig) {
+  if (!currentVocab || $('#vocab-back').hidden) return;
+  gradeVocab(vocabId(currentVocab), richtig);
+  updateVocabHint();
+  renderHeader();
+  nextVocabCard();
+}
+
 // ------------------------------------------------------------- Schreibübung
 
 function initWriting() {
@@ -579,6 +676,19 @@ function importProgress(file) {
 
 // ------------------------------------------------------------------ Tastatur
 
+/* Vokabelkarten: Leertaste dreht um, 1 und 2 bewerten. */
+document.addEventListener('keydown', e => {
+  if ($('#view-vocab').hidden || document.activeElement.tagName === 'INPUT') return;
+
+  if (e.key === ' ' || e.key === 'Enter') {
+    if (!$('#vocab-actions').hidden) { e.preventDefault(); flipVocab(); }
+    return;
+  }
+  if ($('#vocab-grade').hidden) return;
+  if (e.key === '1') { e.preventDefault(); gradeVocabCard(true); }
+  if (e.key === '2') { e.preventDefault(); gradeVocabCard(false); }
+});
+
 document.addEventListener('keydown', e => {
   if ($('#view-session').hidden) return;
   const box = $('#question');
@@ -608,11 +718,16 @@ function init() {
     b.onclick = () => {
       if (b.dataset.view === 'home') renderHome();
       if (b.dataset.view === 'words') renderWords();
+      if (b.dataset.view === 'vocab') renderVocab();
       show(b.dataset.view);
     };
   });
 
   $('#word-form').onsubmit = e => { e.preventDefault(); checkWord(); };
+
+  $('#vocab-flip').onclick = flipVocab;
+  $('#vocab-known').onclick = () => gradeVocabCard(true);
+  $('#vocab-unknown').onclick = () => gradeVocabCard(false);
 
   $('#btn-start').onclick = () => startSession();
   $('#btn-free').onclick = startFreePractice;

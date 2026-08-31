@@ -10,6 +10,7 @@ const ASSETS = [
   './kana-data.js',
   './kurs.js',
   './woerter.js',
+  './vokabeln.js',
   './srs.js',
   './app.js',
   './manifest.json',
@@ -44,8 +45,11 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   if (new URL(e.request.url).origin !== location.origin) return;
 
+  // cache: 'no-cache' erzwingt eine Rückfrage beim Server. Ohne das darf der
+  // Browser-Cache hier eine alte Datei liefern — dann läuft trotz "Netz
+  // zuerst" veralteter Code.
   e.respondWith(
-    fetch(e.request)
+    fetch(new Request(e.request, { cache: 'no-cache' }))
       .then(res => {
         if (res && res.ok) {
           const copy = res.clone();

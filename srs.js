@@ -19,6 +19,7 @@ const Store = {
       unlockedLessons: ['h-a'], // mit der a-Reihe geht es los
       history: {},            // 'YYYY-MM-DD' -> Anzahl beantworteter Karten
       words: {},              // wort -> { seen, correct }
+      vocab: {},              // vokabel-id -> { box, due, seen, correct, wrong }
       settings: { newPerSession: 5, sessionLength: 20, courseOnly: true },
     };
   },
@@ -234,6 +235,97 @@ function pickWord(zuletzt) {
   // Aus der schwächeren Hälfte ziehen, damit es nicht monoton wird
   const haelfte = gewichtet.slice(0, Math.max(1, Math.ceil(gewichtet.length / 2)));
   return haelfte[Math.floor(Math.random() * haelfte.length)].e;
+}
+
+// ------------------------------------------------------ Vokabeltrainer
+
+/* Vokabeln werden über ihre japanische Seite identifiziert. */
+function vocabId(v) {
+  return v.kana || v.kanji || v.romaji;
+}
+
+function vocabList() {
+  return typeof VOCAB === 'undefined' ? [] : VOCAB;
+}
+
+function vocabCardFor(id) {
+  if (!Store.data.vocab[id]) {
+    Store.data.vocab[id] = { box: 0, due: 0, seen: 0, correct: 0, wrong: 0 };
+  }
+  return Store.data.vocab[id];
+}
+
+function vocabDue(now = Date.now()) {
+  return vocabList().filter(v => {
+    const c = Store.data.vocab[vocabId(v)];
+    return c && c.seen > 0 && c.due <= now;
+  });
+}
+
+function vocabNew() {
+  return vocabList().filter(v => {
+    const c = Store.data.vocab[vocabId(v)];
+    return !c || c.seen === 0;
+  });
+}
+
+/* Nächste Vokabel: erst Fälliges, dann Neues. Nie zweimal dieselbe
+ * direkt hintereinander, solange es Alternativen gibt. */
+function nextVocab(zuletzt) {
+  let faellig = vocabDue();
+  let neu = vocabNew();
+
+  if (zuletzt && faellig.length + neu.length > 1) {
+    faellig = faellig.filter(v => vocabId(v) !== zuletzt);
+    neu = neu.filter(v => vocabId(v) !== zuletzt);
+  }
+
+  const pool = faellig.length ? faellig : neu;
+  if (!pool.length) {
+    // Alles gelernt und nichts fällig: trotzdem weiterüben lassen
+    const alle = vocabList().filter(v => vocabId(v) !== zuletzt);
+    return alle.length ? alle[Math.floor(Math.random() * alle.length)] : null;
+  }
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+/* Abfragerichtung. Neue Vokabeln zuerst Japanisch -> Deutsch: erkennen ist
+ * leichter als produzieren, und die Karte wird ja gerade erst eingeführt. */
+function vocabDirection(id, modus) {
+  if (modus === 'jp-de' || modus === 'de-jp') return modus;
+  const c = Store.data.vocab[id];
+  if (!c || c.seen === 0) return 'jp-de';
+  return Math.random() < 0.5 ? 'jp-de' : 'de-jp';
+}
+
+function gradeVocab(id, richtig) {
+  const c = vocabCardFor(id);
+  c.seen += 1;
+  if (richtig) {
+    c.correct += 1;
+    c.box = Math.min(c.box + 1, MAX_BOX);
+  } else {
+    c.wrong += 1;
+    c.box = 0;
+  }
+  c.due = Date.now() + BOX_INTERVALS_DAYS[c.box] * DAY_MS;
+
+  const key = todayKey();
+  Store.data.history[key] = (Store.data.history[key] || 0) + 1;
+  Store.save();
+  return c;
+}
+
+/* Wie viele Vokabeln sitzen schon sicher? */
+function vocabStats() {
+  const alle = vocabList();
+  const gelernt = alle.filter(v => {
+    const c = Store.data.vocab[vocabId(v)];
+    return c && c.seen > 0;
+  });
+  const sicher = gelernt.filter(v => Store.data.vocab[vocabId(v)].box >= 3);
+  return { gesamt: alle.length, gelernt: gelernt.length, sicher: sicher.length,
+           faellig: vocabDue().length, neu: vocabNew().length };
 }
 
 /* Lernstreak: aufeinanderfolgende Tage mit mindestens einer Antwort */

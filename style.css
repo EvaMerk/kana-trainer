@@ -31,6 +31,10 @@
 
 * { box-sizing: border-box; }
 
+/* Muss sein, weil eigene display-Regeln (z. B. .btn-row { display: flex })
+ * sonst das hidden-Attribut aushebeln und Elemente sichtbar bleiben. */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   background: var(--bg);
@@ -389,6 +393,48 @@ button.option:hover:not(:disabled) { border-color: var(--accent); background: va
 .study-romaji { font-size: 20px; font-weight: 600; margin-bottom: 3px; }
 .study-mnemonic { font-size: 15px; }
 .study-similar { font-size: 13px; color: var(--muted); margin-top: 5px; }
+
+/* ------------------------------------------------------------- Vokabeln */
+
+.vocab-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 26px 18px;
+  margin: 14px 0 18px;
+  text-align: center;
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+.vocab-card .prompt-label { margin: 0; }
+
+.vocab-side.back {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.vocab-kana {
+  font-size: 42px;
+  line-height: 1.25;
+  font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+}
+/* Lange Einträge wie „にじゅうしち、にじゅうなな" brauchen weniger Schriftgröße,
+ * sonst stehen sie auf dem Handy über drei Zeilen. */
+.vocab-kana.lang { font-size: 30px; }
+.vocab-kana.sehr-lang { font-size: 24px; }
+.vocab-deutsch.lang { font-size: 23px; }
+.vocab-kanji {
+  font-size: 30px;
+  color: var(--accent);
+  margin-top: 4px;
+  font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+}
+.vocab-romaji { font-size: 17px; color: var(--muted); margin-top: 6px; }
+.vocab-deutsch { font-size: 30px; font-weight: 500; }
+
+.btn-row.center { justify-content: center; }
 
 /* ---------------------------------------------------------------- Schreiben */
 

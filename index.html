@@ -30,6 +30,7 @@
   <nav>
     <button data-view="home" class="active">Übersicht</button>
     <button data-view="words">Wörter</button>
+    <button data-view="vocab">Vokabeln</button>
     <button data-view="write">Schreiben</button>
   </nav>
 </header>
@@ -117,6 +118,32 @@
     </div>
   </section>
 
+  <!-- ------------------------------------------------------------ Vokabeln -->
+  <section id="view-vocab" class="view" hidden>
+    <div class="card">
+      <h2>Vokabeln</h2>
+      <p id="vocab-hint" class="muted"></p>
+
+      <div id="vocab-panel">
+        <div class="vocab-card">
+          <div id="vocab-direction" class="prompt-label"></div>
+          <div id="vocab-front" class="vocab-side"></div>
+          <div id="vocab-back" class="vocab-side back" hidden></div>
+        </div>
+
+        <div id="vocab-actions" class="btn-row center">
+          <button id="vocab-flip" class="primary">Umdrehen</button>
+        </div>
+        <div id="vocab-grade" class="btn-row center" hidden>
+          <button id="vocab-known" class="primary">Gewusst</button>
+          <button id="vocab-unknown" class="ghost">Nicht gewusst</button>
+        </div>
+
+        <p class="hint"><kbd>Leertaste</kbd> dreht um, <kbd>1</kbd> gewusst, <kbd>2</kbd> nicht gewusst.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ----------------------------------------------------------- Schreiben -->
   <section id="view-write" class="view" hidden>
     <div class="card">
@@ -141,6 +168,7 @@
 <script src="kana-data.js"></script>
 <script src="kurs.js"></script>
 <script src="woerter.js"></script>
+<script src="vokabeln.js"></script>
 <script src="srs.js"></script>
 <script src="app.js"></script>
 <script>

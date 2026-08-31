@@ -54,6 +54,34 @@ Bei einem Fehler wird das Wort in seine Zeichen zerlegt, damit du siehst, an wel
 
 Wörter stehen in `woerter.js`. Beim Ergänzen: keine kleinen Kana (っ ゃ ゅ ょ) und kein Dehnungsstrich verwenden — die kennt der Trainer noch nicht als eigene Zeichen, solche Wörter würden nie erscheinen.
 
+## Vokabeltrainer
+
+Karteikarten aus `kursmaterial/Vokabeln/`, abgefragt in beide Richtungen (Japanisch → Deutsch und zurück). Neue Vokabeln starten immer mit Japanisch → Deutsch, weil Erkennen leichter ist als Produzieren; danach mischt es sich. Dieselben Leitner-Boxen wie bei den Zeichen.
+
+### Neue Vokabeln hinzufügen
+
+Fotos, Screenshots oder PDFs in `kursmaterial/Vokabeln/` legen und mir Bescheid sagen — ich tippe sie in eine Textdatei daneben ab. Danach:
+
+```sh
+python3 vokabeln-aktualisieren.py
+```
+
+Das Skript liest alle Textdateien (`.tsv .csv .txt .md`) im Ordner und schreibt `trainer/vokabeln.js`. Bilder und PDFs kann es nicht lesen, meldet sie aber als **OFFEN**, solange keine Textdatei mit gleichem Namen daneben liegt — so ist immer sichtbar, was noch fehlt.
+
+Format, eine Vokabel pro Zeile:
+
+```
+いぬ ; inu ; Hund ; 犬
+```
+
+Trennzeichen darf `;` `|` oder ein Tabulator sein, `#` am Zeilenanfang ist ein Kommentar. Standardreihenfolge ist `kana ; romaji ; deutsch ; kanji`, änderbar pro Datei mit einer Kopfzeile:
+
+```
+#spalten: deutsch ; kana ; romaji
+```
+
+Nicht alle Spalten müssen gefüllt sein — nötig sind nur eine japanische Seite und die deutsche Bedeutung.
+
 ## Wie es funktioniert
 
 **Spaced Repetition.** Jedes Zeichen sitzt in einer „Box". Richtig beantwortet steigt es eine Box auf und kommt später wieder dran, falsch beantwortet fällt es auf Box 0 zurück und kommt bald wieder. Die Abstände: 1 Tag → 2 → 4 → 7 → 14 → 30.
