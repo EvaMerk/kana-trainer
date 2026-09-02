@@ -420,7 +420,9 @@ function nextWord() {
   currentWord = pickWord(currentWord && currentWord.w);
   if (!currentWord) return;
 
-  $('#word-display').textContent = currentWord.w;
+  const anzeige = $('#word-display');
+  anzeige.className = 'big-char word' + laengenKlasse(currentWord.w, 4, 5);
+  anzeige.textContent = currentWord.w;
   $('#word-feedback').innerHTML = '';
 
   const input = $('#word-input');

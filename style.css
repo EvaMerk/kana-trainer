@@ -303,6 +303,9 @@ button.option:hover:not(:disabled) { border-color: var(--accent); background: va
   text-align: center;
   word-break: break-all;
 }
+/* Längere Wörter wie はじめまして kleiner setzen, sonst brechen sie um */
+.big-char.word.lang { font-size: 48px; }
+.big-char.word.sehr-lang { font-size: 40px; }
 
 #view-words .type-form {
   display: flex;
