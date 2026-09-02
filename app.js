@@ -148,6 +148,8 @@ function openLesson(lesson) {
     const body = el('div', 'study-body');
     body.append(el('div', 'study-romaji', c.r));
     body.append(el('div', 'study-mnemonic', c.m));
+    const merkhilfe = kursMerkhilfe(c);
+    if (merkhilfe) body.append(merkhilfe);
     if (c.s && c.s.length) {
       body.append(el('div', 'study-similar', 'Nicht verwechseln mit: ' + c.s.join(' ')));
     }
@@ -225,6 +227,16 @@ function distractors(target, count) {
   return picked;
 }
 
+/* Merkhilfe aus dem Lehrbuch, falls es für das Zeichen eine gibt.
+ * Sie zielt auf den Klang, meine Eselsbrücke auf die Form — beide zeigen. */
+function kursMerkhilfe(char) {
+  if (!char.km) return null;
+  const box = el('div', 'kurs-merkhilfe');
+  box.append(el('span', 'kurs-label', 'Im Kurs: '));
+  box.append(el('span', 'kurs-wort', char.km));
+  return box;
+}
+
 /* Verwechslungshinweise, die für sie gerade Sinn ergeben. Im Kursmodus
  * bringt „ähnlich zu ほ" nichts, wenn ほ noch nie im Kurs vorkam. */
 function relevantSimilar(char) {
@@ -256,6 +268,8 @@ function renderIntro(char, box) {
   box.append(el('div', 'big-char', char.c));
   box.append(el('div', 'big-romaji', char.r));
   box.append(el('div', 'mnemonic', char.m));
+  const merkhilfe = kursMerkhilfe(char);
+  if (merkhilfe) box.append(merkhilfe);
   const aehnlich = relevantSimilar(char);
   if (aehnlich.length) {
     box.append(el('div', 'similar-warn', 'Achtung, ähnlich: ' + aehnlich.join(' ')));
@@ -332,6 +346,8 @@ function answer(char, correct, box, given) {
     fb.append(line);
     if (given) fb.append(el('div', 'muted', `Du hattest „${given}" getippt.`));
     fb.append(el('div', 'mnemonic', char.m));
+    const merkhilfe = kursMerkhilfe(char);
+    if (merkhilfe) fb.append(merkhilfe);
     const aehnlich = relevantSimilar(char);
     if (aehnlich.length) {
       fb.append(el('div', 'similar-warn', 'Ähnlich, aber anders: ' + aehnlich.join(' ')));
@@ -515,11 +531,11 @@ function nextVocabCard() {
   back.hidden = true;
 
   if (currentDirection === 'jp-de') {
-    front.append(japanischeSeite(currentVocab));
+    front.append(japanischeSeite(currentVocab, true));
     back.append(deutscheSeite(currentVocab));
   } else {
     front.append(deutscheSeite(currentVocab));
-    back.append(japanischeSeite(currentVocab));
+    back.append(japanischeSeite(currentVocab, false));
   }
 
   $('#vocab-actions').hidden = false;
@@ -534,18 +550,24 @@ function laengenKlasse(text, mittel, gross) {
   return '';
 }
 
-function japanischeSeite(v) {
+function japanischeSeite(v, alsFrage) {
   const box = el('div', 'vocab-jp');
   if (v.kana) box.append(el('div', 'vocab-kana' + laengenKlasse(v.kana, 7, 12), v.kana));
   if (v.kanji) box.append(el('div', 'vocab-kanji', v.kanji));
   if (v.romaji) box.append(el('div', 'vocab-romaji', v.romaji));
+
+  // さん heißt „drei" UND „Herr/Frau". Wird danach gefragt, muss dabeistehen,
+  // welche der beiden gemeint ist — sonst ist die Frage nicht beantwortbar.
+  if (alsFrage && vocabHomographen(v).length) {
+    box.append(el('div', 'vocab-disambig', v.notiz || 'mehrdeutig'));
+  }
   return box;
 }
 
 function deutscheSeite(v) {
   const box = el('div', 'vocab-de');
   box.append(el('div', 'vocab-deutsch' + laengenKlasse(v.deutsch, 14, 99), v.deutsch));
-  if (v.notiz) box.append(el('div', 'muted', v.notiz));
+  if (v.notiz) box.append(el('div', 'vocab-notiz muted', v.notiz));
   return box;
 }
 

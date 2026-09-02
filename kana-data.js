@@ -3,7 +3,10 @@
  * Felder pro Zeichen:
  *   c  = Zeichen
  *   r  = Romaji (Umschrift)
- *   m  = Eselsbrücke auf Deutsch
+ *   m  = Eselsbrücke auf Deutsch — beschreibt die FORM des Zeichens
+ *   km = Merkhilfe aus Evas Lehrbuch — zielt auf den KLANG (は = „Hanna").
+ *        Nur bei Zeichen, die im Kurs schon dran waren. Ergänzt m, ersetzt es
+ *        nicht: im Unterricht hört sie diese Variante.
  *   s  = optionale Liste ähnlich aussehender Zeichen (für gemeine Quiz-Ablenker) */
 
 const LESSONS = [
@@ -11,7 +14,7 @@ const LESSONS = [
   {
     id: 'h-a', script: 'hiragana', title: 'Hiragana: a-Reihe', chars: [
       { c: 'あ', r: 'a',  m: 'Ein Apfel, der an einem Kreuz-Ast hängt.', s: ['お', 'め', 'ぬ'] },
-      { c: 'い', r: 'i',  m: 'Zwei Striche nebeneinander — wie zwei i ohne Punkt.', s: ['り'] },
+      { c: 'い', r: 'i',  m: 'Zwei Striche nebeneinander — wie zwei i ohne Punkt.', km: 'Inge', s: ['り'] },
       { c: 'う', r: 'u',  m: 'Ein Gesicht im Profil, das „Uh?" sagt: Stirn und Nase.', s: ['ら', 'つ'] },
       { c: 'え', r: 'e',  m: 'Eine Ente mit langem Hals und Schwanz.', s: ['ん', 'ス'] },
       { c: 'お', r: 'o',  m: 'Wie あ, aber mit Schwung — eine Oma mit Dutt.', s: ['あ', 'む'] },
@@ -23,14 +26,14 @@ const LESSONS = [
       { c: 'き', r: 'ki', m: 'Ein Kirchturm mit zwei Querbalken.', s: ['さ', 'ま'] },
       { c: 'く', r: 'ku', m: 'Ein Kuckucks-Schnabel, der sich öffnet.', s: ['へ'] },
       { c: 'け', r: 'ke', m: 'Ein Kegel mit einem Strich davor.', s: ['は', 'ほ', 'に'] },
-      { c: 'こ', r: 'ko', m: 'Zwei Kommas übereinander.', s: ['に', 'コ'] },
+      { c: 'こ', r: 'ko', m: 'Zwei Kommas übereinander.', km: 'Kost', s: ['に', 'コ'] },
     ]
   },
   {
     id: 'h-sa', script: 'hiragana', title: 'Hiragana: sa-Reihe', chars: [
-      { c: 'さ', r: 'sa',  m: 'Eine Salat-Gabel mit Schwung.', s: ['き', 'ち'] },
-      { c: 'し', r: 'shi', m: 'Ein Schihang — die lange Kurve am Ende der Piste.', s: ['つ', 'レ'] },
-      { c: 'す', r: 'su',  m: 'Eine Suppenkelle mit Schlaufe.', s: ['お', 'む'] },
+      { c: 'さ', r: 'sa',  m: 'Eine Salat-Gabel mit Schwung.', km: 'Passant', s: ['き', 'ち'] },
+      { c: 'し', r: 'shi', m: 'Ein Schihang — die lange Kurve am Ende der Piste.', km: 'Schiff', s: ['つ', 'レ'] },
+      { c: 'す', r: 'su',  m: 'Eine Suppenkelle mit Schlaufe.', km: 'Maß (ß + u)', s: ['お', 'む'] },
       { c: 'せ', r: 'se',  m: 'Ein Seil, das an einem Pfosten hängt.', s: ['サ', 'せ'] },
       { c: 'そ', r: 'so',  m: 'Eine Sockennaht im Zickzack.', s: ['ぞ', 'ろ'] },
     ]
@@ -40,7 +43,7 @@ const LESSONS = [
       { c: 'た', r: 'ta',  m: 'Ein „t" und ein „a" nebeneinander geschrieben.', s: ['な', 'に'] },
       { c: 'ち', r: 'chi', m: 'Ein Stuhl, auf dem jemand chillt.', s: ['さ', 'ら'] },
       { c: 'つ', r: 'tsu', m: 'Eine Tsunami-Welle, die heranrollt.', s: ['し', 'う', 'ツ'] },
-      { c: 'て', r: 'te',  m: 'Eine winkende Hand — 手 (te) heißt wirklich „Hand"!', s: ['で', 'へ'] },
+      { c: 'て', r: 'te',  m: 'Eine winkende Hand — 手 (te) heißt wirklich „Hand"!', km: 'Tennis', s: ['で', 'へ'] },
       { c: 'と', r: 'to',  m: 'Ein Tor-Pfosten mit einem Querstrich.', s: ['ど', 'ヒ'] },
     ]
   },
@@ -55,7 +58,7 @@ const LESSONS = [
   },
   {
     id: 'h-ha', script: 'hiragana', title: 'Hiragana: ha-Reihe', chars: [
-      { c: 'は', r: 'ha', m: 'Ein Haus mit Leiter an der Wand.', s: ['ほ', 'け', 'ば'] },
+      { c: 'は', r: 'ha', m: 'Ein Haus mit Leiter an der Wand.', km: 'Hanna', s: ['ほ', 'け', 'ば'] },
       { c: 'ひ', r: 'hi', m: 'Ein lachender Mund — hihi!', s: ['び', 'ぴ'] },
       { c: 'ふ', r: 'fu', m: 'Der Berg Fuji mit Wolken drumherum.', s: ['ぶ', 'ヌ'] },
       { c: 'へ', r: 'he', m: 'Eine kleine Hecke — und identisch mit Katakana ヘ!', s: ['く', 'ヘ'] },
@@ -64,10 +67,10 @@ const LESSONS = [
   },
   {
     id: 'h-ma', script: 'hiragana', title: 'Hiragana: ma-Reihe', chars: [
-      { c: 'ま', r: 'ma', m: 'Mama mit Haarschleife.', s: ['き', 'も'] },
+      { c: 'ま', r: 'ma', m: 'Mama mit Haarschleife.', km: 'Mann', s: ['き', 'も'] },
       { c: 'み', r: 'mi', m: 'Sieht aus wie die Zahl 21 — aber wir sagen „mi".', s: ['ろ'] },
       { c: 'む', r: 'mu', m: 'Eine Kuh sagt Muh.', s: ['す', 'お'] },
-      { c: 'め', r: 'me', m: 'Ein Auge — 目 (me) heißt wirklich „Auge". Wie ぬ, nur ohne Schleife.', s: ['ぬ', 'あ'] },
+      { c: 'め', r: 'me', m: 'Ein Auge — 目 (me) heißt wirklich „Auge". Wie ぬ, nur ohne Schleife.', km: 'Mensch', s: ['ぬ', 'あ'] },
       { c: 'も', r: 'mo', m: 'Ein Angelhaken mit zwei Würmern dran.', s: ['ま', 'モ'] },
     ]
   },
@@ -75,7 +78,7 @@ const LESSONS = [
     id: 'h-ya', script: 'hiragana', title: 'Hiragana: ya-Reihe', chars: [
       { c: 'や', r: 'ya', m: 'Eine Yacht mit schrägem Segel.', s: ['ヤ'] },
       { c: 'ゆ', r: 'yu', m: 'Ein Fisch mit Schwanzflosse.', s: ['ユ'] },
-      { c: 'よ', r: 'yo', m: 'Ein Yo-Yo an der Schnur.', s: ['ま', 'ヨ'] },
+      { c: 'よ', r: 'yo', m: 'Ein Yo-Yo an der Schnur.', km: 'Yoga', s: ['ま', 'ヨ'] },
     ]
   },
   {
@@ -91,7 +94,7 @@ const LESSONS = [
     id: 'h-wa', script: 'hiragana', title: 'Hiragana: wa-Reihe + n', chars: [
       { c: 'わ', r: 'wa', m: 'Ein Wasserhahn, aus dem es tropft.', s: ['ね', 'れ'] },
       { c: 'を', r: 'wo', m: 'Gesprochen wie „o". Kommt nur als Partikel vor (markiert das Objekt).', s: ['お'] },
-      { c: 'ん', r: 'n',  m: 'Ein „n" mit Schwung — der einzige Einzelkonsonant im Japanischen.', s: ['え', 'ソ'] },
+      { c: 'ん', r: 'n',  m: 'Ein „n" mit Schwung — der einzige Einzelkonsonant im Japanischen.', km: 'Annahme', s: ['え', 'ソ'] },
     ]
   },
 
@@ -102,10 +105,10 @@ const LESSONS = [
       { c: 'ぎ', r: 'gi', m: 'き + Dakuten.', s: ['き'] },
       { c: 'ぐ', r: 'gu', m: 'く + Dakuten.', s: ['く'] },
       { c: 'げ', r: 'ge', m: 'け + Dakuten.', s: ['け'] },
-      { c: 'ご', r: 'go', m: 'こ + Dakuten.', s: ['こ'] },
-      { c: 'ざ', r: 'za', m: 'さ + Dakuten → s wird zu z.', s: ['さ'] },
-      { c: 'じ', r: 'ji', m: 'し + Dakuten. Achtung: klingt „dschi", nicht „zi"!', s: ['し', 'ぢ'] },
-      { c: 'ず', r: 'zu', m: 'す + Dakuten.', s: ['す', 'づ'] },
+      { c: 'ご', r: 'go', m: 'こ + Dakuten.', km: 'Gold', s: ['こ'] },
+      { c: 'ざ', r: 'za', m: 'さ + Dakuten → s wird zu z.', km: 'Sand', s: ['さ'] },
+      { c: 'じ', r: 'ji', m: 'し + Dakuten. Achtung: klingt „dschi", nicht „zi"!', km: 'Jim', s: ['し', 'ぢ'] },
+      { c: 'ず', r: 'zu', m: 'す + Dakuten.', km: 'Summe', s: ['す', 'づ'] },
       { c: 'ぜ', r: 'ze', m: 'せ + Dakuten.', s: ['せ'] },
       { c: 'ぞ', r: 'zo', m: 'そ + Dakuten.', s: ['そ'] },
     ]
@@ -115,7 +118,7 @@ const LESSONS = [
       { c: 'だ', r: 'da', m: 'た + Dakuten → t wird zu d.', s: ['た'] },
       { c: 'ぢ', r: 'ji', m: 'ち + Dakuten. Klingt wie じ, kommt aber viel seltener vor.', s: ['じ'] },
       { c: 'づ', r: 'zu', m: 'つ + Dakuten. Klingt wie ず, kommt selten vor.', s: ['ず'] },
-      { c: 'で', r: 'de', m: 'て + Dakuten.', s: ['て'] },
+      { c: 'で', r: 'de', m: 'て + Dakuten.', km: 'denn', s: ['て'] },
       { c: 'ど', r: 'do', m: 'と + Dakuten.', s: ['と'] },
       { c: 'ば', r: 'ba', m: 'は + Dakuten → h wird zu b.', s: ['は', 'ぱ'] },
       { c: 'び', r: 'bi', m: 'ひ + Dakuten.', s: ['ひ', 'ぴ'] },

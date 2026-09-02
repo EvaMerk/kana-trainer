@@ -250,6 +250,18 @@ button:disabled { opacity: .55; cursor: default; }
 }
 .similar-warn { font-size: 14px; color: var(--muted); margin-bottom: 14px; }
 
+/* Merkhilfe aus dem Lehrbuch — bewusst anders als die Form-Eselsbrücke,
+ * damit auf einen Blick klar ist, welche im Kurs gilt. */
+.kurs-merkhilfe {
+  font-size: 15px;
+  border-left: 3px solid var(--accent);
+  padding: 4px 0 4px 11px;
+  margin: 0 0 14px;
+  text-align: left;
+}
+.kurs-label { color: var(--muted); }
+.kurs-wort { font-weight: 600; }
+
 .options {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -432,6 +444,12 @@ button.option:hover:not(:disabled) { border-color: var(--accent); background: va
   font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
 }
 .vocab-romaji { font-size: 17px; color: var(--muted); margin-top: 6px; }
+.vocab-disambig {
+  font-size: 13px;
+  color: var(--accent);
+  margin-top: 10px;
+}
+.vocab-notiz { font-size: 13px; margin: 8px 0 0; }
 .vocab-deutsch { font-size: 30px; font-weight: 500; }
 
 .btn-row.center { justify-content: center; }

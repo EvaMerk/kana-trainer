@@ -239,9 +239,19 @@ function pickWord(zuletzt) {
 
 // ------------------------------------------------------ Vokabeltrainer
 
-/* Vokabeln werden über ihre japanische Seite identifiziert. */
+/* Vokabeln werden über japanische Seite UND Bedeutung identifiziert.
+ *
+ * Die Bedeutung muss mit rein: さん ist sowohl „drei" als auch die Anrede
+ * „Herr/Frau". Über die kana-Seite allein würden sich beide einen Lernstand
+ * teilen, und ein Fehler bei der einen würde die andere mit zurückwerfen. */
 function vocabId(v) {
-  return v.kana || v.kanji || v.romaji;
+  return (v.kana || v.kanji || v.romaji) + '·' + v.deutsch;
+}
+
+/* Gibt es weitere Vokabeln, die genauso geschrieben werden? */
+function vocabHomographen(v) {
+  const seite = v.kana || v.kanji || v.romaji;
+  return vocabList().filter(a => (a.kana || a.kanji || a.romaji) === seite && a.deutsch !== v.deutsch);
 }
 
 function vocabList() {

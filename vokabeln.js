@@ -1,13 +1,13 @@
 /* Automatisch erzeugt von vokabeln-aktualisieren.py — nicht von Hand ändern.
  *
  * Quelle: kursmaterial/Vokabeln/
- * Stand: 30 Vokabeln aus 2 Datei(en). */
+ * Stand: 35 Vokabeln aus 4 Datei(en). */
 
 const VOCAB = [
   { kana: 'れい、ぜろ', romaji: 'rei, zero', deutsch: 'null', kanji: '零', quelle: 'Zahlen_0-bis-10.tsv' },
   { kana: 'いち', romaji: 'ichi', deutsch: 'eins', kanji: '一', quelle: 'Zahlen_0-bis-10.tsv' },
   { kana: 'に', romaji: 'ni', deutsch: 'zwei', kanji: '二', quelle: 'Zahlen_0-bis-10.tsv' },
-  { kana: 'さん', romaji: 'san', deutsch: 'drei', kanji: '三', quelle: 'Zahlen_0-bis-10.tsv' },
+  { kana: 'さん', romaji: 'san', deutsch: 'drei', kanji: '三', notiz: 'Zahl — nicht die Anrede さん!', quelle: 'Zahlen_0-bis-10.tsv' },
   { kana: 'し、よん', romaji: 'shi, yon', deutsch: 'vier', kanji: '四', quelle: 'Zahlen_0-bis-10.tsv' },
   { kana: 'ご', romaji: 'go', deutsch: 'fünf', kanji: '五', quelle: 'Zahlen_0-bis-10.tsv' },
   { kana: 'ろく', romaji: 'roku', deutsch: 'sechs', kanji: '六', quelle: 'Zahlen_0-bis-10.tsv' },
@@ -34,4 +34,9 @@ const VOCAB = [
   { kana: 'にじゅうしち、にじゅうなな', romaji: 'nijuushichi, nijuunana', deutsch: 'siebenundzwanzig', kanji: '二十七', quelle: 'Zahlen_11-99.tsv' },
   { kana: 'にじゅうはち', romaji: 'nijuuhachi', deutsch: 'achtundzwanzig', kanji: '二十八', quelle: 'Zahlen_11-99.tsv' },
   { kana: 'にじゅうきゅう、にじゅうく', romaji: 'nijuukyuu, nijuuku', deutsch: 'neunundzwanzig', kanji: '二十九', quelle: 'Zahlen_11-99.tsv' },
+  { kana: 'はじめまして', romaji: 'hajimemashite', deutsch: 'Freut mich, Sie kennenzulernen (beim ersten Treffen)', quelle: 'lektion-1-begruessung.tsv' },
+  { kana: 'です', romaji: 'desu', deutsch: 'bin, ist, sind (steht nie allein, immer hinter einem Wort)', quelle: 'lektion-1-begruessung.tsv' },
+  { kana: 'さん', romaji: 'san', deutsch: 'Herr, Frau (Anhängsel HINTER dem Namen, nie für sich selbst)', notiz: 'Anrede — klingt genau wie die Zahl さん (drei)', quelle: 'lektion-1-begruessung.tsv' },
+  { kana: 'ページ', romaji: 'peeji', deutsch: 'Seite', quelle: 'peeji, ban.tsv' },
+  { kana: 'ばん', romaji: 'ban', deutsch: 'Nummer', kanji: '番', quelle: 'peeji, ban.tsv' },
 ];

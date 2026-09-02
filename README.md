@@ -40,7 +40,9 @@ Neue Blätter bekommen? Einfach in `kursmaterial/` legen und im Projektordner au
 python3 kurs-aktualisieren.py
 ```
 
-Das Skript liest die Dateinamen (`50hiragana-su.pdf` → す) und schreibt `kurs.js` neu. Zeichen ohne eigenes Blatt kannst du im Skript unter `ZUSAETZLICH` eintragen.
+Das Skript liest die Dateinamen (`50hiragana-su.pdf` → す) und schreibt `kurs.js` neu. Es versteht Kunrei und Hepburn (`si` wie `shi`) sowie `nn` für ん.
+
+Zeichen **ohne eigenes Übungsblatt** — typischerweise Dakuten-Formen, die nur im Lehrbuch auftauchen — stehen in `kursmaterial/weitere-zeichen.txt`, ein Zeichen pro Zeile mit Quellenangabe als Kommentar.
 
 Den Schalter „Nur meine Kurszeichen" auf der Startseite ausmachen, um stattdessen nach den klassischen Reihen zu lernen. Im Kursmodus sind auch die Antwortmöglichkeiten und die Ähnlichkeitshinweise auf die Kursauswahl beschränkt — es taucht nie ein Zeichen auf, das im Kurs noch nicht dran war.
 
@@ -80,7 +82,13 @@ Trennzeichen darf `;` `|` oder ein Tabulator sein, `#` am Zeilenanfang ist ein K
 #spalten: deutsch ; kana ; romaji
 ```
 
-Nicht alle Spalten müssen gefüllt sein — nötig sind nur eine japanische Seite und die deutsche Bedeutung.
+Nicht alle Spalten müssen gefüllt sein — nötig sind nur eine japanische Seite und die deutsche Bedeutung. Eine fünfte Spalte `notiz` nimmt Zusatzinfos auf.
+
+**Gleich geschriebene Vokabeln** (さん heißt „drei" *und* „Herr/Frau") bekommen getrennte Lernstände. Bei der Abfrage Japanisch → Deutsch wird die `notiz` als Unterscheidungshilfe eingeblendet — sonst wäre die Frage nicht beantwortbar. Deshalb bei solchen Paaren immer eine Notiz setzen.
+
+## Zwei Arten von Merkhilfen
+
+Zu jedem Zeichen steht in `kana-data.js` eine Eselsbrücke zur **Form** (`m`, „は ist ein Haus mit Leiter"). Zeichen, die im Kurs dran waren, haben zusätzlich die Merkhilfe aus dem Lehrbuch (`km`), die auf den **Klang** zielt („Hanna" → ha). Die App zeigt beide — im Unterricht fällt die zweite Variante.
 
 ## Wie es funktioniert
 
