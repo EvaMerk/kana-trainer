@@ -69,14 +69,30 @@
     </div>
 
     <div class="card">
-      <h2>Fortschritt sichern</h2>
-      <p class="muted">Dein Lernstand liegt nur in diesem Browser. Sicherungsdatei ab und zu speichern — dann kannst du ihn auf ein anderes Gerät holen oder nach einem Datenverlust zurückspielen.</p>
+      <h2>Mac und iPhone abgleichen</h2>
+      <p class="muted">Dein Lernstand liegt nur in diesem Browser. Zum Übertragen: hier <b>kopieren</b>, den Text sich selbst per Nachricht oder AirDrop aufs andere Gerät schicken, dort <b>einfügen</b>.</p>
+      <p class="muted">Beide Stände werden zusammengeführt, nichts wird überschrieben. Die Richtung ist egal, und zweimal einfügen schadet nicht.</p>
       <div class="btn-row">
-        <button id="btn-export" class="ghost">Sicherung speichern</button>
-        <button id="btn-import" class="ghost">Sicherung laden</button>
-        <input id="import-file" type="file" accept="application/json,.json" hidden>
+        <button id="btn-copy" class="ghost">Stand kopieren</button>
+        <button id="btn-paste" class="ghost">Stand einfügen</button>
+      </div>
+      <div id="transfer-box" hidden>
+        <textarea id="transfer-text" class="transfer-text" rows="4" spellcheck="false"
+                  placeholder="Hier den kopierten Text einfügen …"></textarea>
+        <div class="btn-row">
+          <button id="btn-transfer-ok" class="ghost">Übernehmen</button>
+          <button id="btn-transfer-cancel" class="ghost small">Abbrechen</button>
+        </div>
       </div>
       <p id="backup-msg" class="hint"></p>
+      <details class="backup-datei">
+        <summary>Lieber als Datei sichern</summary>
+        <div class="btn-row">
+          <button id="btn-export" class="ghost small">Sicherung speichern</button>
+          <button id="btn-import" class="ghost small">Sicherung laden</button>
+          <input id="import-file" type="file" accept="application/json,.json" hidden>
+        </div>
+      </details>
     </div>
 
     <div class="card danger-zone">

@@ -90,6 +90,20 @@ Nicht alle Spalten müssen gefüllt sein — nötig sind nur eine japanische Sei
 
 Zu jedem Zeichen steht in `kana-data.js` eine Eselsbrücke zur **Form** (`m`, „は ist ein Haus mit Leiter"). Zeichen, die im Kurs dran waren, haben zusätzlich die Merkhilfe aus dem Lehrbuch (`km`), die auf den **Klang** zielt („Hanna" → ha). Die App zeigt beide — im Unterricht fällt die zweite Variante.
 
+## Mac und iPhone abgleichen
+
+Der Lernstand liegt im `localStorage` des jeweiligen Browsers — jedes Gerät zählt für sich. Zum Zusammenführen unten auf der Übersicht **Stand kopieren**, den Text sich selbst per Nachricht oder AirDrop aufs andere Gerät schicken, dort **Stand einfügen**.
+
+Die beiden Stände werden **zusammengeführt, nicht ersetzt**:
+
+- Je Karte gilt die Fassung mit mehr Wiederholungen — `seen` wächst nur, also hat sie die jüngeren Antworten gesehen.
+- Bei Gleichstand (auf beiden Geräten unabhängig geübt) gewinnt die niedrigere Box: was einmal danebenging, kommt lieber nochmal dran.
+- Die Tagesstatistik nimmt je Datum den höheren Wert, freigeschaltete Lektionen werden vereinigt.
+
+Dadurch ist die Richtung egal, und zweimal einfügen ändert nichts mehr. Die **Einstellungen bleiben lokal** — eine alte Sicherung soll nicht unbemerkt den Kursmodus abschalten.
+
+Alternativ geht es weiter als Datei („Lieber als Datei sichern"). Auf dem iPhone ist der Weg über die Zwischenablage aber zuverlässiger, weil Downloads aus einer Home-Bildschirm-App dort nicht immer funktionieren.
+
 ## Wie es funktioniert
 
 **Spaced Repetition.** Jedes Zeichen sitzt in einer „Box". Richtig beantwortet steigt es eine Box auf und kommt später wieder dran, falsch beantwortet fällt es auf Box 0 zurück und kommt bald wieder. Die Abstände: 1 Tag → 2 → 4 → 7 → 14 → 30.

@@ -51,6 +51,64 @@ const Store = {
     };
   },
 
+  /* Welche von zwei Fassungen derselben Karte gilt?
+   *
+   * Normalfall: die mit mehr Wiederholungen — `seen` wächst nur, das Gerät
+   * mit dem höheren Wert hat also die jüngeren Antworten gesehen.
+   *
+   * Gleichstand heißt, dass auf beiden Geräten unabhängig geübt wurde. Dann
+   * gewinnt die niedrigere Box, also die Seite, auf der das Zeichen schlechter
+   * saß. Das ist zum einen sicherer — was einmal danebenging, soll wieder
+   * drankommen — und zum anderen unabhängig davon, in welche Richtung gerade
+   * abgeglichen wird. Sonst hinge das Ergebnis daran, wer wen einliest. */
+  fremdeGewinnt(eigene, fremde) {
+    const eSeen = eigene.seen || 0, fSeen = fremde.seen || 0;
+    if (fSeen !== eSeen) return fSeen > eSeen;
+    const eBox = eigene.box || 0, fBox = fremde.box || 0;
+    if (fBox !== eBox) return fBox < eBox;
+    return (fremde.due || 0) < (eigene.due || 0);
+  },
+
+  /* Einen fremden Lernstand in den eigenen einarbeiten — fürs Üben auf Mac
+   * und iPhone.
+   *
+   * Pro Karte entscheidet fremdeGewinnt(); die Gewinnerin wird komplett
+   * übernommen und nicht feldweise gemischt, sonst passten Box und
+   * Fälligkeitstermin nicht mehr zusammen.
+   *
+   * Dadurch ist die Richtung des Abgleichs egal und mehrfaches Einspielen
+   * derselben Datei ändert nichts mehr. Die Einstellungen bleiben bewusst
+   * lokal: eine alte Sicherung soll nicht unbemerkt den Kursmodus abschalten. */
+  mergeProgress(eingehend) {
+    const lokal = this.merge(this.data);
+    const fremd = this.merge(eingehend);
+    const ziel = this.merge(lokal);
+    let uebernommen = 0;
+
+    for (const feld of ['cards', 'words', 'vocab']) {
+      ziel[feld] = { ...lokal[feld] };
+      for (const [id, fremdeKarte] of Object.entries(fremd[feld])) {
+        const eigene = ziel[feld][id];
+        if (!eigene || this.fremdeGewinnt(eigene, fremdeKarte)) {
+          ziel[feld][id] = fremdeKarte;
+          uebernommen += 1;
+        }
+      }
+    }
+
+    // Tagesstatistik: der höhere Wert je Datum. Addieren würde bei jedem
+    // erneuten Abgleich denselben Tag ein weiteres Mal mitzählen.
+    ziel.history = { ...lokal.history };
+    for (const [tag, anzahl] of Object.entries(fremd.history)) {
+      ziel.history[tag] = Math.max(ziel.history[tag] || 0, anzahl);
+    }
+
+    ziel.unlockedLessons = [...new Set([...lokal.unlockedLessons, ...fremd.unlockedLessons])];
+    ziel.settings = { ...lokal.settings };
+
+    return { data: ziel, uebernommen };
+  },
+
   save() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));

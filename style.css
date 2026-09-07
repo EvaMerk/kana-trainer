@@ -480,6 +480,30 @@ button.option:hover:not(:disabled) { border-color: var(--accent); background: va
   display: block;
 }
 
+/* Abgleich zwischen den Geräten */
+.transfer-text {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 12px 0 10px;
+  padding: 10px 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  resize: vertical;
+}
+
+.backup-datei { margin-top: 16px; }
+.backup-datei summary {
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
 .danger-zone { text-align: right; padding: 12px 20px; }
 
 @media (max-width: 480px) {

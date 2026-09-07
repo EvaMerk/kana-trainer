@@ -676,26 +676,60 @@ function exportProgress() {
   backupMsg('Sicherung gespeichert. Leg sie am besten in iCloud ab.');
 }
 
+/* Gemeinsamer Weg für Datei und Zwischenablage: Text einlesen, prüfen,
+ * mit dem lokalen Stand zusammenführen. */
+function applyProgressText(text) {
+  let incoming;
+  try {
+    const parsed = JSON.parse(text);
+    incoming = parsed.data || parsed; // auch rohe Store-Daten akzeptieren
+    if (!incoming || typeof incoming.cards !== 'object') throw new Error('Format');
+  } catch {
+    backupMsg('Das konnte ich nicht lesen — ist der Text vollständig kopiert?');
+    return false;
+  }
+
+  const { data, uebernommen } = Store.mergeProgress(incoming);
+  Store.data = data;
+  Store.save();
+  renderHome();
+
+  backupMsg(uebernommen
+    ? `Abgeglichen: ${uebernommen} ${uebernommen === 1 ? 'Karte war' : 'Karten waren'} auf dem anderen Gerät weiter.`
+    : 'Abgeglichen — hier war schon alles auf dem neusten Stand.');
+  return true;
+}
+
 function importProgress(file) {
   const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const parsed = JSON.parse(reader.result);
-      const incoming = parsed.data || parsed; // auch rohe Store-Daten akzeptieren
-      if (!incoming || typeof incoming.cards !== 'object') throw new Error('Format');
-
-      const count = Object.keys(incoming.cards).length;
-      if (!confirm(`Sicherung mit ${count} geübten Zeichen gefunden. Deinen aktuellen Stand damit ersetzen?`)) return;
-
-      Store.data = Store.merge(incoming);
-      Store.save();
-      renderHome();
-      backupMsg(`${count} Zeichen wiederhergestellt.`);
-    } catch {
-      backupMsg('Diese Datei konnte ich nicht lesen — ist das die richtige Sicherungsdatei?');
-    }
-  };
+  reader.onload = () => applyProgressText(reader.result);
   reader.readAsText(file);
+}
+
+function progressText() {
+  return JSON.stringify({ version: 1, exported: new Date().toISOString(), data: Store.data });
+}
+
+function zeigeTransferBox(inhalt) {
+  const box = $('#transfer-box');
+  const feld = $('#transfer-text');
+  feld.value = inhalt;
+  box.hidden = false;
+  feld.focus();
+  if (inhalt) feld.select();
+}
+
+async function copyProgress() {
+  const text = progressText();
+  try {
+    await navigator.clipboard.writeText(text);
+    backupMsg('Kopiert. Schick ihn dir jetzt aufs andere Gerät und füge ihn dort ein.');
+  } catch {
+    // Zwischenablage ist ohne HTTPS oder ohne Erlaubnis gesperrt — dann den
+    // Text markiert anzeigen, damit sie ihn von Hand kopieren kann.
+    zeigeTransferBox(text);
+    backupMsg('Zwischenablage gesperrt — Text ist markiert, bitte von Hand kopieren.');
+  }
 }
 
 // ------------------------------------------------------------------ Tastatur
@@ -762,6 +796,18 @@ function init() {
     Store.data.settings.courseOnly = e.target.checked;
     Store.save();
     renderHome();
+  };
+
+  $('#btn-copy').onclick = copyProgress;
+  $('#btn-paste').onclick = () => zeigeTransferBox('');
+  $('#btn-transfer-cancel').onclick = () => { $('#transfer-box').hidden = true; };
+  $('#btn-transfer-ok').onclick = () => {
+    const text = $('#transfer-text').value.trim();
+    if (!text) { backupMsg('Da ist noch nichts eingefügt.'); return; }
+    if (applyProgressText(text)) {
+      $('#transfer-text').value = ''; // keine Kopie des Lernstands im Formular lassen
+      $('#transfer-box').hidden = true;
+    }
   };
 
   $('#btn-export').onclick = exportProgress;
