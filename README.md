@@ -28,7 +28,13 @@ Nach ein bis zwei Minuten liegt die App unter
 
 Auf dem iPhone in **Safari** öffnen (nicht Chrome — nur Safari darf auf iOS Apps auf den Home-Bildschirm legen), dann Teilen-Symbol → **Zum Home-Bildschirm**. Danach startet sie wie eine normale App, ohne Browserleiste, und funktioniert auch ohne Netz.
 
+Das Repo muss **öffentlich** sein: aus einem privaten Repo veröffentlicht Pages nur mit GitHub Pro. Das wäre hier ohnehin sinnlos — eine Pages-Seite ist auch aus einem privaten Repo im offenen Internet erreichbar, versteckt würde nur der Quelltext. Damit die Seite wenigstens nicht in Suchmaschinen auftaucht, steht in `index.html` ein `noindex`. Bewusst **ohne** Sperre in `robots.txt`: die würde verhindern, dass das `noindex` überhaupt gelesen wird.
+
+Nicht im Repo landet der Ordner `kursmaterial/` — er liegt eine Ebene höher, außerhalb. Der Lernfortschritt wird nie hochgeladen, der bleibt im Browser des jeweiligen Geräts.
+
 Änderungen später ausspielen: `git add -A && git commit -m "..." && git push`.
+
+> **Bei jeder Änderung an einer Datei aus `ASSETS` die Zahl in `CACHE` (`sw.js`) hochzählen.** Der `activate`-Handler löscht nur Caches mit *anderem* Namen; bleibt der Name gleich, räumt er nie auf und die App läuft auf den Geräten beliebig lange weiter mit alten Dateien. Genau so hing die Wortliste mit 108 Einträgen fest, während die Datei schon 140 hatte.
 
 ## Kursmodus
 
