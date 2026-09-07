@@ -1,7 +1,13 @@
 /* Service Worker: legt die App lokal ab, damit sie auch ohne Netz läuft
  * (U-Bahn, Flugzeug, schlechtes Handynetz). */
 
-const CACHE = 'kana-trainer-v1';
+/* Die Zahl bei jeder Inhaltsänderung hochzählen.
+ *
+ * Der activate-Handler löscht alle Caches, die anders heißen als dieser hier.
+ * Solange der Name gleich bleibt, findet er nichts zum Aufräumen und ein
+ * einmal abgelegter Stand kann beliebig lange überleben — genau so hing die
+ * alte Wortliste mit 108 Einträgen fest, während die Datei längst 140 hatte. */
+const CACHE = 'kana-trainer-v3';
 
 const ASSETS = [
   './',
