@@ -36,6 +36,13 @@ Nicht im Repo landet der Ordner `kursmaterial/` — er liegt eine Ebene höher, 
 
 > **Bei jeder Änderung an einer Datei aus `ASSETS` die Zahl in `CACHE` (`sw.js`) hochzählen.** Der `activate`-Handler löscht nur Caches mit *anderem* Namen; bleibt der Name gleich, räumt er nie auf und die App läuft auf den Geräten beliebig lange weiter mit alten Dateien. Genau so hing die Wortliste mit 108 Einträgen fest, während die Datei schon 140 hatte.
 
+## Auf dem Handy
+
+Zwei Dinge sind eigens fürs iPhone gebaut, weil die Bildschirmhöhe dort knapp ist:
+
+- **Die Weiterkommen-Knöpfe kleben unten** (`.weiter` im CSS). Eine Intro-Karte ist rund 500 px hoch, eine Auswertung mit Eselsbrücke ähnlich — ohne das läge der Knopf unterhalb des Displays und man müsste nach jeder Antwort scrollen. `position: sticky` heftet nur innerhalb des sichtbaren Teils des Elternblocks; liegt der ganz unterhalb des Rands, hilft es nicht. Deshalb holt `zeigeAuswertung()` die Auswertung zusätzlich per `scrollIntoView` heran, und `zumSeitenanfang()` setzt vor jeder neuen Frage zurück nach oben.
+- **`enterkeyhint="go"`** auf den Eingabefeldern: Die Taste unten rechts auf der Handytastatur heißt dann „Los" und schickt die Antwort ab. Sonst müsste man den Prüfen-Knopf treffen, den die eingeblendete Tastatur oft verdeckt.
+
 ## Kursmodus
 
 Standardmäßig übt der Trainer **nur die Zeichen, die im Kurs schon dran waren**. Welche das sind, steht in `kurs.js` und wird aus den Übungsblättern in `kursmaterial/` abgeleitet.

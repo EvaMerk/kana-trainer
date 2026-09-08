@@ -128,8 +128,12 @@
       <div id="words-panel">
         <div id="word-display" class="big-char word"></div>
         <form id="word-form" class="type-form" autocomplete="off">
+          <!-- enterkeyhint: auf dem Handy heißt die Taste unten rechts dann
+               „Los" und schickt die Antwort ab. Ohne das musste man den
+               Prüfen-Knopf treffen, den die Tastatur oft verdeckt. -->
           <input id="word-input" class="type-input wide" type="text"
-                 inputmode="latin" autocapitalize="off" autocomplete="off"
+                 inputmode="latin" enterkeyhint="go"
+                 autocapitalize="off" autocomplete="off"
                  spellcheck="false" placeholder="Umschrift tippen">
           <button type="submit" class="primary">Prüfen</button>
         </form>

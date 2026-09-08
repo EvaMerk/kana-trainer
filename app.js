@@ -13,6 +13,29 @@ let resizeWriteCanvas = null; // von initWriting() gesetzt
 
 // ---------------------------------------------------------------- Navigation
 
+/* Zurück an den Anfang, bevor die nächste Frage aufgebaut wird. Ohne das
+ * bliebe die Seite dort stehen, wo eben der Weiter-Knopf war, und das neue
+ * Zeichen erschiene oberhalb des Bildschirmrands. */
+function zumSeitenanfang() {
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+/* Nach einer Antwort die Auswertung ins Bild holen.
+ *
+ * Sie wird unter das Eingabefeld gehängt und liegt auf dem Handy komplett
+ * unterhalb des Bildschirmrands — man musste jedes Mal erst scrollen, um
+ * Ergebnis und Weiter-Knopf zu sehen. `block: 'end'` schiebt das untere Ende
+ * ins Bild, also den Knopf; ist die Erklärung länger als der Bildschirm,
+ * hält ihn zusätzlich `position: sticky` fest (siehe `.weiter` im CSS).
+ *
+ * Der Fokus wandert weiterhin auf den Knopf, damit am Mac die Eingabetaste
+ * weitermacht — aber ohne den ruckartigen eigenen Scrollsprung. */
+function zeigeAuswertung(block, knopf) {
+  const sanft = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  block.scrollIntoView({ block: 'end', behavior: sanft ? 'smooth' : 'auto' });
+  knopf.focus({ preventScroll: true });
+}
+
 function show(view) {
   document.querySelectorAll('.view').forEach(v => v.hidden = true);
   $('#view-' + view).hidden = false;
@@ -253,6 +276,10 @@ function nextQuestion() {
   const box = $('#question');
   box.innerHTML = '';
 
+  // Nach dem Antworten steht die Seite unten beim Weiter-Knopf. Ohne das hier
+  // erschiene die nächste Frage oberhalb des Bildschirmrands.
+  zumSeitenanfang();
+
   $('#progress-fill').style.width =
     Math.round((session.index / session.queue.length) * 100) + '%';
   $('#session-count').textContent = `${session.index + 1} / ${session.queue.length}`;
@@ -275,14 +302,14 @@ function renderIntro(char, box) {
     box.append(el('div', 'similar-warn', 'Achtung, ähnlich: ' + aehnlich.join(' ')));
   }
 
-  const btn = el('button', 'primary', 'Verstanden — abfragen');
+  const btn = el('button', 'primary weiter', 'Verstanden — abfragen');
   btn.onclick = () => {
     cardFor(char.c).seen = 0; // Intro zählt noch nicht als Wiederholung
     box.innerHTML = '';
     renderMultipleChoice(char, box, 'mc-read');
   };
   box.append(btn);
-  btn.focus();
+  btn.focus({ preventScroll: true });
 }
 
 function renderMultipleChoice(char, box, mode) {
@@ -317,6 +344,8 @@ function renderTyping(char, box) {
   input.autocapitalize = 'off';
   input.autocomplete = 'off';
   input.spellcheck = false;
+  input.inputMode = 'latin';
+  input.enterKeyHint = 'go'; // Handytastatur: „Los" schickt ab, kein Zielen nötig
   input.placeholder = 'z. B. ka';
   form.append(input);
   form.onsubmit = e => {
@@ -356,11 +385,11 @@ function answer(char, correct, box, given) {
     session.queue.push(char);
   }
 
-  const btn = el('button', 'primary', 'Weiter');
+  const btn = el('button', 'primary weiter', 'Weiter');
   btn.onclick = () => { session.index++; nextQuestion(); };
   fb.append(btn);
   box.append(fb);
-  btn.focus();
+  zeigeAuswertung(fb, btn);
 }
 
 function finishSession() {
@@ -420,6 +449,8 @@ function nextWord() {
   currentWord = pickWord(currentWord && currentWord.w);
   if (!currentWord) return;
 
+  zumSeitenanfang(); // sonst bliebe die Seite unten bei der alten Auswertung
+
   const anzeige = $('#word-display');
   anzeige.className = 'big-char word' + laengenKlasse(currentWord.w, 4, 5);
   anzeige.textContent = currentWord.w;
@@ -466,12 +497,12 @@ function checkWord() {
   if (currentWord.k) bedeutung.append(el('span', 'word-kanji', ' — mit Kanji: ' + currentWord.k));
   box.append(bedeutung);
 
-  const weiter = el('button', 'primary', 'Nächstes Wort');
+  const weiter = el('button', 'primary weiter', 'Nächstes Wort');
   weiter.onclick = nextWord;
   box.append(weiter);
 
   fb.append(box);
-  weiter.focus();
+  zeigeAuswertung(box, weiter);
 }
 
 /* Wort in seine Zeichen zerlegen — zeigt, an welcher Stelle es hakte */

@@ -388,6 +388,34 @@ button.option:hover:not(:disabled) { border-color: var(--accent); background: va
 .fb-romaji { font-size: 26px; font-weight: 500; }
 .feedback button { margin-top: 8px; }
 
+/* Weiterkommen-Knöpfe: „Verstanden — abfragen", „Weiter", „Nächstes Wort".
+ *
+ * Alle drei stehen am Ende eines langen Blocks — die Intro-Karte ist rund
+ * 500 px hoch, eine Auswertung mit Eselsbrücke und Verwechslungskandidaten
+ * ähnlich. Auf einem Handy passt das nicht aufs Display, und der Knopf lag
+ * darunter: man musste nach jeder Antwort erst scrollen.
+ *
+ * sticky hält ihn am unteren Rand, solange sein Elternblock überhaupt im Bild
+ * ist. Das ist die Einschränkung: liegt der ganze Block unterhalb des
+ * Bildschirms, gibt es nichts zu heften — deshalb holt `zeigeAuswertung()`
+ * die Auswertung zusätzlich per scrollIntoView heran. Passt alles aufs
+ * Display, verhält sich der Knopf wie ein gewöhnlicher. */
+.weiter {
+  position: sticky;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  z-index: 2;
+}
+
+/* Breite Fläche und Schatten nur auf schmalen Displays: dort ist der Knopf
+ * ein Tippziel und schwebt sichtbar über dem Text. Am Mac scrollt die Seite
+ * meist gar nicht, da bliebe nur ein unnötig breiter Knopf mit Schlagschatten. */
+@media (max-width: 480px) {
+  .weiter {
+    width: 100%;
+    box-shadow: 0 6px 20px rgb(0 0 0 / 30%);
+  }
+}
+
 /* ------------------------------------------------------------ Lektionskarte */
 
 .study-card {
