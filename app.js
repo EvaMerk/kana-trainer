@@ -56,9 +56,36 @@ function renderHeader() {
 
 // ---------------------------------------------------------------- Startseite
 
+/* Standanzeige ganz unten auf der Übersicht.
+ *
+ * Zeigt, welche Fassung auf DIESEM Gerät läuft — die Zahlen kommen aus den
+ * geladenen Dateien, der Name aus dem tatsächlich aktiven Zwischenspeicher.
+ * Damit ist auf einen Blick erkennbar, ob ein Handy noch auf altem Stand
+ * hängt, statt das aus dem Verhalten erraten zu müssen. */
+function renderVersion() {
+  const n = $('#version-line');
+  if (!n) return;
+
+  const teile = [];
+  if (typeof COURSE_CHARS !== 'undefined') teile.push(`${COURSE_CHARS.length} Zeichen`);
+  if (typeof WORDS !== 'undefined') teile.push(`${WORDS.length} Wörter`);
+  if (typeof VOCAB !== 'undefined') teile.push(`${VOCAB.length} Vokabeln`);
+  n.textContent = teile.join(' · ');
+
+  // Der Name des aktiven Caches verrät die Fassung. Ohne Service Worker
+  // (z. B. per Doppelklick geöffnet) gibt es keinen — dann bleibt es bei
+  // den Zahlen.
+  if (!('caches' in window)) return;
+  caches.keys().then(namen => {
+    const treffer = namen.find(k => k.startsWith('kana-trainer-'));
+    if (treffer) n.textContent += ' · Stand ' + treffer.replace('kana-trainer-', '');
+  }).catch(() => { /* Zugriff gesperrt, nicht schlimm */ });
+}
+
 function renderHome() {
   renderHeader();
   renderCourseMode();
+  renderVersion();
 
   const due = dueChars().length;
   const fresh = Math.min(newChars().length, Store.data.settings.newPerSession);

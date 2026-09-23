@@ -34,6 +34,10 @@ Nicht im Repo landet der Ordner `kursmaterial/` — er liegt eine Ebene höher, 
 
 Änderungen später ausspielen: `git add -A && git commit -m "..." && git push`.
 
+Die App hält sich selbst aktuell: Bei jedem Start **und bei jedem Zurückholen aus dem Hintergrund** fragt sie nach einer neuen Fassung, und sobald ein neuer Service Worker übernimmt, lädt sie sich einmal neu. Nötig war das wegen iOS — dort sucht eine Home-Bildschirm-App nur bei einer echten Navigation nach Updates, und wer sie bloß aus dem App-Umschalter zurückholt, bleibt beliebig lange auf altem Stand.
+
+Ganz unten auf der Übersicht steht, welche Fassung auf dem jeweiligen Gerät läuft, z. B. `37 Zeichen · 167 Wörter · 83 Vokabeln · Stand v11`. Damit lässt sich ein hängendes Gerät ablesen statt erraten.
+
 > **Bei jeder Änderung an einer Datei aus `ASSETS` die Zahl in `CACHE` (`sw.js`) hochzählen.** Der `activate`-Handler löscht nur Caches mit *anderem* Namen; bleibt der Name gleich, räumt er nie auf und die App läuft auf den Geräten beliebig lange weiter mit alten Dateien. Genau so hing die Wortliste mit 108 Einträgen fest, während die Datei schon 140 hatte.
 
 ## Auf dem Handy

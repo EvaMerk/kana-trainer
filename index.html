@@ -103,6 +103,8 @@
     <div class="card danger-zone">
       <button id="btn-reset" class="ghost small">Fortschritt zurücksetzen</button>
     </div>
+
+    <p id="version-line" class="version-line"></p>
   </section>
 
   <!-- --------------------------------------------------------------- Übung -->
@@ -197,11 +199,41 @@
 <script src="srs.js"></script>
 <script src="app.js"></script>
 <script>
-  // Offline-Fähigkeit. Läuft nur über https bzw. localhost — beim Öffnen
-  // per Doppelklick (file://) wird das hier still übersprungen.
+  /* Offline-Fähigkeit und automatische Aktualisierung.
+   *
+   * Läuft nur über https bzw. localhost — beim Öffnen per Doppelklick
+   * (file://) wird das hier still übersprungen.
+   *
+   * Warum der Aufwand: iOS sucht nur bei einer echten Navigation nach einer
+   * neuen Fassung. Holt man die App vom Home-Bildschirm aus dem
+   * App-Umschalter zurück, ist das keine Navigation — die App lief dadurch
+   * wochenlang mit alten Dateien weiter, ohne dass etwas darauf hindeutete.
+   * Deshalb wird hier bei jedem Start und bei jedem Zurückholen aktiv
+   * nachgefragt. */
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    // Lief beim Laden schon ein Service Worker? Dann ist ein späterer
+    // Wechsel ein echtes Update und ein Neuladen bringt die neuen Dateien.
+    // Beim allerersten Besuch gibt es keinen Vorgänger — da wäre das
+    // Neuladen nur ein überflüssiges Flackern.
+    const hatteVorgaenger = Boolean(navigator.serviceWorker.controller);
+    let laedtNeu = false;
+
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hatteVorgaenger || laedtNeu) return;
+      laedtNeu = true;           // schützt vor einer Neulade-Schleife
+      location.reload();
+    });
+
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(() => { /* nicht schlimm */ });
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        // Bewusst ohne Prüfung auf document.visibilityState: die kostet eine
+        // Abfrage kaum etwas (meist ein 304), meldet aber je nach Umgebung
+        // "hidden", obwohl die App vor einem liegt — dann unterbliebe die
+        // Aktualisierung genau dort, wo sie gebraucht wird.
+        const nachsehen = () => reg.update().catch(() => {});
+        nachsehen();
+        document.addEventListener('visibilitychange', nachsehen);
+      }).catch(() => { /* nicht schlimm */ });
     });
   }
 </script>
