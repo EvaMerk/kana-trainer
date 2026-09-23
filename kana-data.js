@@ -24,7 +24,7 @@ const LESSONS = [
     id: 'h-ka', script: 'hiragana', title: 'Hiragana: ka-Reihe', chars: [
       { c: 'か', r: 'ka', m: 'Ein Kanu mit Paddel daneben.', s: ['が', 'ケ'] },
       { c: 'き', r: 'ki', m: 'Ein Kirchturm mit zwei Querbalken.', s: ['さ', 'ま'] },
-      { c: 'く', r: 'ku', m: 'Ein Kuckucks-Schnabel, der sich öffnet.', s: ['へ'] },
+      { c: 'く', r: 'ku', m: 'Ein Kuckucks-Schnabel, der sich öffnet.', km: 'Kulisse', s: ['へ'] },
       { c: 'け', r: 'ke', m: 'Ein Kegel mit einem Strich davor.', s: ['は', 'ほ', 'に'] },
       { c: 'こ', r: 'ko', m: 'Zwei Kommas übereinander.', km: 'Kost', s: ['に', 'コ'] },
     ]
@@ -103,7 +103,7 @@ const LESSONS = [
     id: 'h-daku1', script: 'hiragana', title: 'Hiragana: Dakuten g / z', chars: [
       { c: 'が', r: 'ga', m: 'か + zwei Striche („Dakuten") → k wird zu g.', s: ['か'] },
       { c: 'ぎ', r: 'gi', m: 'き + Dakuten.', s: ['き'] },
-      { c: 'ぐ', r: 'gu', m: 'く + Dakuten.', s: ['く'] },
+      { c: 'ぐ', r: 'gu', m: 'く + Dakuten.', km: 'Guss', s: ['く'] },
       { c: 'げ', r: 'ge', m: 'け + Dakuten.', s: ['け'] },
       { c: 'ご', r: 'go', m: 'こ + Dakuten.', km: 'Gold', s: ['こ'] },
       { c: 'ざ', r: 'za', m: 'さ + Dakuten → s wird zu z.', km: 'Sand', s: ['さ'] },

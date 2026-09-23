@@ -53,7 +53,7 @@ Neue Blätter bekommen? Einfach in `kursmaterial/` legen und im Projektordner au
 python3 kurs-aktualisieren.py
 ```
 
-Das Skript liest die Dateinamen (`50hiragana-su.pdf` → す) und schreibt `kurs.js` neu. Es versteht Kunrei und Hepburn (`si` wie `shi`) sowie `nn` für ん.
+Das Skript liest die Dateinamen (`50hiragana-su.pdf` → す, `katakana-tu.pdf` → ツ) und schreibt `kurs.js` neu. Es versteht Kunrei und Hepburn (`si` wie `shi`) sowie `nn` für ん. Kopien mit Zählsuffix (`50hiragana-to (1).pdf`) meldet es als nicht zuordenbar und überspringt sie — das Original zählt.
 
 Zeichen **ohne eigenes Übungsblatt** — typischerweise Dakuten-Formen, die nur im Lehrbuch auftauchen — stehen in `kursmaterial/weitere-zeichen.txt`, ein Zeichen pro Zeile mit Quellenangabe als Kommentar.
 
@@ -68,6 +68,8 @@ Hepburn und Kunrei gelten beide (`shi` wie `si`, `tsu` wie `tu`). Lange Vokale w
 Bei einem Fehler wird das Wort in seine Zeichen zerlegt, damit du siehst, an welcher Stelle es hakte.
 
 Wörter stehen in `woerter.js`. Beim Ergänzen: keine kleinen Kana (っ ゃ ゅ ょ) und kein Dehnungsstrich verwenden — die kennt der Trainer noch nicht als eigene Zeichen, solche Wörter würden nie erscheinen.
+
+**Nach jedem neuen Zeichensatz die Abdeckung pro Zeichen nachrechnen**, nicht nur die Gesamtzahl lesbarer Wörter: ein Zeichen, für das kein Wort existiert, kommt im Lesemodus schlicht nie vor. Katakana sind dabei besonders zäh — ohne Dehnungsstrich lässt sich aus wenigen Zeichen fast kein Lehnwort bilden. Stand 23.09.: ツ und ト haben noch kein Wort.
 
 ## Vokabeltrainer
 

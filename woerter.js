@@ -159,4 +159,37 @@ const WORDS = [
   { w: 'りんご',   r: 'ringo',    d: 'Apfel',              k: '林檎' },
   { w: 'れきし',   r: 'rekishi',  d: 'Geschichte (Fach)',  k: '歴史' },
   { w: 'わたし',   r: 'watashi',  d: 'ich',                k: '私' },
+// --- Für die Zeichen der Kursstunden vom 10. und 23.09. -------------------
+// の イ ス ツ ト ぐ hatten vorher kein einziges Wort, た も や nur eines.
+  { w: 'のみます',   r: 'nomimasu',  d: 'trinken',                    k: '飲みます' },
+  { w: 'もの',       r: 'mono',      d: 'Ding, Sache',                k: '物' },
+  { w: 'この',       r: 'kono',      d: 'dieser, diese, dieses',      k: 'この' },
+  { w: 'あの',       r: 'ano',       d: 'jener, jene, jenes',         k: 'あの' },
+  { w: 'たのしい',   r: 'tanoshii',  d: 'erfreulich, macht Spaß',     k: '楽しい' },
+  { w: 'たかい',     r: 'takai',     d: 'teuer; hoch',                k: '高い' },
+  { w: 'あたま',     r: 'atama',     d: 'Kopf',                       k: '頭' },
+  { w: 'あなた',     r: 'anata',     d: 'du, Sie',                    k: 'あなた' },
+  { w: 'した',       r: 'shita',     d: 'unten, unter',               k: '下' },
+  { w: 'もち',       r: 'mochi',     d: 'Reiskuchen',                 k: '餅' },
+  { w: 'もも',       r: 'momo',      d: 'Pfirsich',                   k: '桃' },
+  { w: 'おもいます', r: 'omoimasu',  d: 'denken, glauben',            k: '思います' },
+  { w: 'やさい',     r: 'yasai',     d: 'Gemüse',                     k: '野菜' },
+  { w: 'はやい',     r: 'hayai',     d: 'schnell, früh',              k: '早い' },
+  { w: 'やすい',     r: 'yasui',     d: 'billig, günstig',            k: '安い' },
+  { w: 'すぐ',       r: 'sugu',      d: 'sofort, gleich',             k: 'すぐ' },
+  { w: 'かぐ',       r: 'kagu',      d: 'Möbel',                      k: '家具' },
+  { w: 'でんち',     r: 'denchi',    d: 'Batterie',                   k: '電池' },
+
+// Katakana: mit イ ス ツ ト lässt sich bisher genau ein echtes Wort bilden.
+  { w: 'スイス',     r: 'suisu',     d: 'die Schweiz',                k: 'スイス' },
+
+// Wörter, die auch im Vokabeltrainer stehen — doppelt verankert
+  { w: 'かんこく',   r: 'kankoku',   d: 'Südkorea',                   k: '韓国' },
+  { w: 'ちち',       r: 'chichi',    d: 'mein Vater',                 k: '父' },
+  { w: 'かんごし',   r: 'kangoshi',  d: 'Krankenpfleger, -pflegerin', k: '看護師' },
+  { w: 'やくざいし', r: 'yakuzaishi', d: 'Apotheker, Apothekerin',    k: '薬剤師' },
+  { w: 'はい',       r: 'hai',       d: 'ja',                         k: 'はい' },
+  { w: 'いいえ',     r: 'iie',       d: 'nein',                       k: 'いいえ' },
+  { w: 'すみません', r: 'sumimasen', d: 'Entschuldigung!',            k: 'すみません' },
+  { w: 'なに',       r: 'nani',      d: 'was',                        k: '何' },
 ];
