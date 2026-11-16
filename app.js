@@ -42,6 +42,11 @@ function show(view) {
   document.querySelectorAll('nav button').forEach(b =>
     b.classList.toggle('active', b.dataset.view === view));
 
+  // Während einer Runde Kopfzeile ausblenden: auf dem iPhone kostet sie
+  // knapp 180 px, und dann passt die Auswertung samt Weiter-Knopf nicht mehr
+  // auf den Bildschirm. Raus geht es über „Abbrechen".
+  document.body.classList.toggle('in-runde', view === 'session');
+
   // Das Canvas hat nur eine messbare Größe, wenn es sichtbar ist.
   if (view === 'write' && resizeWriteCanvas) resizeWriteCanvas();
 }
@@ -391,7 +396,7 @@ function renderMultipleChoice(char, box, mode) {
     const btn = el('button', 'option');
     btn.append(el('span', 'option-key', String(i + 1)));
     btn.append(el('span', 'option-text', readMode ? opt.r : opt.c));
-    btn.onclick = () => answer(char, opt.r === char.r, box);
+    btn.onclick = () => answer(char, opt.r === char.r, box, readMode ? opt.r : opt.c, 'gewählt');
     grid.append(btn);
   });
 
@@ -423,11 +428,15 @@ function renderTyping(char, box) {
   input.focus();
 }
 
-function answer(char, correct, box, given) {
+function answer(char, correct, box, given, wie = 'getippt') {
   grade(char.c, correct);
   correct ? session.right++ : session.wrong++;
 
   box.querySelectorAll('button, input').forEach(n => n.disabled = true);
+  // Antwortknöpfe bzw. Eingabefeld werden nicht mehr gebraucht — weg damit,
+  // sonst schiebt die Auswertung den Weiter-Knopf unter den Bildschirmrand.
+  // Was gewählt wurde, steht im Feedback.
+  box.querySelectorAll('.options, .type-form').forEach(n => n.hidden = true);
 
   const fb = el('div', 'feedback ' + (correct ? 'ok' : 'bad'));
   fb.append(el('div', 'feedback-head', correct ? 'Richtig!' : 'Nicht ganz'));
@@ -438,7 +447,7 @@ function answer(char, correct, box, given) {
     line.append(el('span', 'fb-eq', '='));
     line.append(el('span', 'fb-romaji', char.r));
     fb.append(line);
-    if (given) fb.append(el('div', 'muted', `Du hattest „${given}" getippt.`));
+    if (given) fb.append(el('div', 'muted', `Du hattest „${given}" ${wie}.`));
     fb.append(el('div', 'mnemonic', char.m));
     const merkhilfe = kursMerkhilfe(char);
     if (merkhilfe) fb.append(merkhilfe);

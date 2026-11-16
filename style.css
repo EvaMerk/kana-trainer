@@ -100,6 +100,31 @@ main {
   padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
 }
 
+/* Während einer Übungsrunde: keine Kopfzeile (siehe show() in app.js) */
+body.in-runde header { display: none; }
+body.in-runde main { padding-top: calc(14px + env(safe-area-inset-top)); }
+
+/* Auf dem Handy die Runde enger setzen, damit Frage, Auswertung und
+ * Weiter-Knopf ohne Scrollen auf einen Bildschirm passen (iPhone 14 Pro). */
+@media (max-width: 480px) {
+  .session-bar { margin-bottom: 10px; }
+  .question { padding: 18px 16px; }
+  .question .prompt-label { margin-bottom: 4px; }
+  .question .big-char { font-size: 92px; margin-bottom: 4px; }
+  .question .big-char.as-romaji { font-size: 56px; }
+  .question .big-romaji { font-size: 34px; margin-bottom: 8px; }
+  .question .kanji-zeichen { font-size: 84px; }
+  .question .mnemonic, .question .kurs-merkhilfe { margin-bottom: 10px; }
+  .question .options { margin-top: 14px; gap: 8px; }
+  .question button.option { padding: 11px; }
+  .question .type-form { margin-top: 14px; }
+  .question .feedback { margin-top: 14px; padding-top: 12px; }
+  .question .feedback-head { margin-bottom: 6px; }
+  .question .kanji-rueckseite { margin-top: 8px; padding-top: 12px; }
+  .question .kanji-lesung { margin-bottom: 4px; }
+  .question .kanji-beispiele { margin-top: 6px; line-height: 1.5; }
+}
+
 .card {
   background: var(--card);
   border: 1px solid var(--line);

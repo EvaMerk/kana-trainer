@@ -45,6 +45,7 @@ Ganz unten auf der Übersicht steht, welche Fassung auf dem jeweiligen Gerät l�
 Zwei Dinge sind eigens fürs iPhone gebaut, weil die Bildschirmhöhe dort knapp ist:
 
 - **Die Weiterkommen-Knöpfe kleben unten** (`.weiter` im CSS). Eine Intro-Karte ist rund 500 px hoch, eine Auswertung mit Eselsbrücke ähnlich — ohne das läge der Knopf unterhalb des Displays und man müsste nach jeder Antwort scrollen. `position: sticky` heftet nur innerhalb des sichtbaren Teils des Elternblocks; liegt der ganz unterhalb des Rands, hilft es nicht. Deshalb holt `zeigeAuswertung()` die Auswertung zusätzlich per `scrollIntoView` heran, und `zumSeitenanfang()` setzt vor jeder neuen Frage zurück nach oben.
+- **Während einer Runde verschwindet die Kopfzeile** (Titel, Statistik, Reiter — `body.in-runde`), und auf schmalen Bildschirmen ist die Runde enger gesetzt. Nach dem Antworten werden die Antwortknöpfe bzw. das Eingabefeld ausgeblendet; was gewählt wurde, steht im Feedback. So passen Frage, Auswertung und Weiter-Knopf auf dem iPhone 14 Pro ohne Scrollen auf einen Bildschirm — auch in Safari mit eingeblendeter Leiste.
 - **`enterkeyhint="go"`** auf den Eingabefeldern: Die Taste unten rechts auf der Handytastatur heißt dann „Los" und schickt die Antwort ab. Sonst müsste man den Prüfen-Knopf treffen, den die eingeblendete Tastatur oft verdeckt.
 
 ## Schwerpunkt: Alles, Hiragana, Katakana oder Kanji
