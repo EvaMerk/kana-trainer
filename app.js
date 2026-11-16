@@ -47,8 +47,9 @@ function show(view) {
 }
 
 function renderHeader() {
-  const due = dueChars().length;
-  const fresh = newChars().length;
+  const kanji = kanjiImFokus();
+  const due = dueChars().length + (kanji ? vocabDue('kanji').length : 0);
+  const fresh = newChars().length + (kanji ? vocabNew('kanji').length : 0);
   $('#stat-streak').textContent = streak();
   $('#stat-due').textContent = due;
   $('#stat-new').textContent = fresh;
@@ -70,6 +71,7 @@ function renderVersion() {
   if (typeof COURSE_CHARS !== 'undefined') teile.push(`${COURSE_CHARS.length} Zeichen`);
   if (typeof WORDS !== 'undefined') teile.push(`${WORDS.length} Wörter`);
   if (typeof VOCAB !== 'undefined') teile.push(`${VOCAB.length} Vokabeln`);
+  if (typeof KANJI !== 'undefined') teile.push(`${KANJI.length} Kanji`);
   n.textContent = teile.join(' · ');
 
   // Der Name des aktiven Caches verrät die Fassung. Ohne Service Worker
@@ -84,11 +86,13 @@ function renderVersion() {
 
 function renderHome() {
   renderHeader();
+  renderFokus();
   renderCourseMode();
   renderVersion();
 
-  const due = dueChars().length;
-  const fresh = Math.min(newChars().length, Store.data.settings.newPerSession);
+  const kanji = kanjiFuerRunde();
+  const due = dueChars().length + kanji.due.length;
+  const fresh = Math.min(newChars().length, Store.data.settings.newPerSession) + kanji.fresh.length;
   const hint = $('#session-hint');
 
   if (due + fresh === 0) {
@@ -100,8 +104,9 @@ function renderHome() {
     hint.textContent = parts.join(' · ');
   }
 
-  // Schwache Zeichen
-  const weak = weakestChars(8);
+  // Schwache Zeichen (bei Kanji-Schwerpunkt die schwachen Kanji)
+  const weak = fokus() === 'kanji' ? weakestKanji(8)
+    : [...weakestChars(8), ...(kanjiImFokus() ? weakestKanji(4) : [])].slice(0, 8);
   const weakBox = $('#weak-list');
   weakBox.innerHTML = '';
   if (weak.length === 0) {
@@ -109,16 +114,32 @@ function renderHome() {
   } else {
     weak.forEach(w => {
       const item = el('div', 'weak-item');
-      item.append(el('span', 'weak-char', w.c));
-      item.append(el('span', 'weak-romaji', w.r));
-      const pct = Math.round(w.rate * 100);
-      item.append(el('span', 'weak-rate', pct + '%'));
-      item.title = w.m;
+      const istKanji = w.typ === 'kanji';
+      item.append(el('span', 'weak-char', istKanji ? w.kanji : w.c));
+      item.append(el('span', 'weak-romaji', istKanji ? w.lesung.split('、')[0] : w.r));
+      const rate = istKanji ? (() => { const c = Store.data.kanji[vocabId(w)]; return c.correct / c.seen; })() : w.rate;
+      item.append(el('span', 'weak-rate', Math.round(rate * 100) + '%'));
+      item.title = istKanji ? w.deutsch : w.m;
       weakBox.append(item);
     });
   }
 
   renderLessonList();
+}
+
+/* Schwerpunkt-Auswahl: Alles / Hiragana / Katakana / Kanji */
+function renderFokus() {
+  document.querySelectorAll('#fokus button').forEach(b => {
+    const aktiv = b.dataset.fokus === fokus();
+    b.classList.toggle('active', aktiv);
+    b.setAttribute('aria-pressed', aktiv);
+  });
+}
+
+function setzeFokus(f) {
+  Store.data.settings.fokus = f;
+  Store.save();
+  renderHome();
 }
 
 /* Schalter „Nur meine Kurszeichen" samt Anzeige der betroffenen Zeichen */
@@ -133,10 +154,21 @@ function renderCourseMode() {
 
   toggle.checked = Boolean(Store.data.settings.courseOnly);
 
+  // Bei „Kanji" ist der Kana-Schalter bedeutungslos — ausblenden.
+  toggle.closest('.switch').hidden = fokus() === 'kanji';
+
   list.innerHTML = '';
-  list.hidden = !toggle.checked;
-  if (toggle.checked) {
-    COURSE_CHARS.forEach(ch => {
+  list.hidden = !toggle.checked && fokus() !== 'kanji';
+  if (kanjiImFokus()) {
+    vocabList('kanji').forEach(k => {
+      const chip = el('span', 'course-chip kanji-chip', k.kanji);
+      chip.title = `${k.lesung} — ${k.deutsch}`;
+      list.append(chip);
+    });
+  }
+  if (toggle.checked && fokus() !== 'kanji') {
+    const f = fokus();
+    COURSE_CHARS.filter(ch => f === 'alle' || (CHAR_MAP[ch] && CHAR_MAP[ch].script === f)).forEach(ch => {
       const eintrag = CHAR_MAP[ch];
       const chip = el('span', 'course-chip', ch);
       if (eintrag) chip.title = `${eintrag.r} — ${eintrag.m}`;
@@ -219,7 +251,9 @@ function openLesson(lesson) {
 function startSession(customQueue) {
   const queue = customQueue || buildSession();
   if (!queue.length) {
-    alert('Nichts fällig. Schalte unten eine neue Lektion frei oder nutze „Freies Üben".');
+    alert(fokus() === 'kanji'
+      ? 'Keine Kanji fällig. Nutze „Freies Üben", um trotzdem welche zu wiederholen.'
+      : 'Nichts fällig. Schalte unten eine neue Lektion frei oder nutze „Freies Üben".');
     return;
   }
   session = { queue, index: 0, right: 0, wrong: 0 };
@@ -229,13 +263,15 @@ function startSession(customQueue) {
 
 /* Freies Üben: alles Freigeschaltete, egal ob fällig */
 function startFreePractice() {
-  const pool = shuffle(unlockedChars()).slice(0, 20);
+  const kanji = kanjiImFokus() ? vocabList('kanji').map(alsKanjiFrage) : [];
+  const pool = shuffle([...fokusChars(), ...kanji]).slice(0, 20);
   startSession(pool);
 }
 
 /* Gezielt die Problemzeichen */
 function startWeakPractice() {
-  const weak = weakestChars(10);
+  const weak = fokus() === 'kanji' ? weakestKanji(10)
+    : [...weakestChars(10), ...(kanjiImFokus() ? weakestKanji(5) : [])];
   if (!weak.length) {
     alert('Noch keine Problemzeichen erkannt — üb erst ein paar normale Runden.');
     return;
@@ -244,6 +280,7 @@ function startWeakPractice() {
 }
 
 function pickMode(char) {
+  if (char.typ === 'kanji') return 'kanji';
   const card = Store.data.cards[char.c];
   if (!card || card.seen === 0) return 'intro';
   if (card.box <= 1) return 'mc-read';
@@ -311,6 +348,7 @@ function nextQuestion() {
     Math.round((session.index / session.queue.length) * 100) + '%';
   $('#session-count').textContent = `${session.index + 1} / ${session.queue.length}`;
 
+  if (char.typ === 'kanji') return renderKanjiFrage(char, box);
   if (mode === 'intro') return renderIntro(char, box);
   if (mode === 'type') return renderTyping(char, box);
   renderMultipleChoice(char, box, mode);
@@ -417,6 +455,51 @@ function answer(char, correct, box, given) {
   fb.append(btn);
   box.append(fb);
   zeigeAuswertung(fb, btn);
+}
+
+/* Kanji in der Runde: Karteikarte wie im Kanji-Reiter. Umdrehen mit
+ * Enter/Leertaste, bewerten mit 1 (gewusst) und 2 (nicht gewusst) — die
+ * beiden Knöpfe sind .option, damit die Zifferntasten der Runde greifen. */
+function renderKanjiFrage(k, box) {
+  box.append(el('div', 'prompt-label', 'Lesung und Bedeutung?'));
+  box.append(el('div', 'kanji-zeichen', k.kanji));
+
+  const flip = el('button', 'primary weiter', 'Umdrehen');
+  flip.onclick = () => {
+    flip.remove();
+    const rueck = el('div', 'kanji-rueckseite');
+    if (k.lesung) rueck.append(el('div', 'kanji-lesung', k.lesung));
+    rueck.append(el('div', 'vocab-deutsch' + laengenKlasse(k.deutsch, 14, 99), k.deutsch));
+    if (k.beispiele) {
+      const liste = el('ul', 'kanji-beispiele');
+      k.beispiele.split('·').map(b => b.trim()).filter(Boolean)
+        .forEach(b => liste.append(el('li', '', b)));
+      rueck.append(liste);
+    }
+    if (k.notiz) rueck.append(el('div', 'vocab-notiz muted', k.notiz));
+
+    const grid = el('div', 'options kanji-bewertung');
+    [['Gewusst', true], ['Nicht gewusst', false]].forEach(([text, richtig], i) => {
+      const b = el('button', 'option');
+      b.append(el('span', 'option-key', String(i + 1)));
+      b.append(el('span', 'option-text', text));
+      b.onclick = () => kanjiBewerten(k, richtig, box);
+      grid.append(b);
+    });
+    rueck.append(grid);
+    box.append(rueck);
+    zeigeAuswertung(rueck, grid.querySelector('button'));
+  };
+  box.append(flip);
+  flip.focus({ preventScroll: true });
+}
+
+function kanjiBewerten(k, richtig, box) {
+  gradeVocab(vocabId(k), richtig, 'kanji');
+  richtig ? session.right++ : session.wrong++;
+  if (!richtig) session.queue.push(k); // später in dieser Runde nochmal
+  session.index++;
+  nextQuestion();
 }
 
 function finishSession() {
@@ -647,6 +730,82 @@ function gradeVocabCard(richtig) {
   nextVocabCard();
 }
 
+// ------------------------------------------------------------------ Kanji
+
+/* Kanji als Karteikarten, nur in eine Richtung: Kanji sehen, Lesung und
+ * Bedeutung wissen. Schreiben wird hier bewusst nicht abgefragt. Lernstand
+ * und Leitner-Logik wie bei den Vokabeln, nur im eigenen Stapel 'kanji'. */
+
+let currentKanji = null;
+
+function renderKanji() {
+  const stats = vocabStats('kanji');
+  const panel = $('#kanji-panel');
+
+  if (!stats.gesamt) {
+    panel.hidden = true;
+    $('#kanji-hint').textContent =
+      'Noch keine Kanji vorhanden. Trag sie in kursmaterial/Kanji/ ein und lass „vokabeln-aktualisieren.py" laufen.';
+    return;
+  }
+
+  panel.hidden = false;
+  updateKanjiHint();
+  nextKanjiCard();
+}
+
+function updateKanjiHint() {
+  const s = vocabStats('kanji');
+  const teile = [`${s.gesamt} Kanji`];
+  if (s.faellig) teile.push(`${s.faellig} fällig`);
+  if (s.neu) teile.push(`${s.neu} neu`);
+  teile.push(`${s.sicher} sitzen sicher`);
+  $('#kanji-hint').textContent = teile.join(' · ');
+}
+
+function nextKanjiCard() {
+  currentKanji = nextVocab(currentKanji && vocabId(currentKanji), 'kanji');
+  if (!currentKanji) return;
+
+  const front = $('#kanji-front');
+  const back = $('#kanji-back');
+  front.innerHTML = '';
+  back.innerHTML = '';
+  back.hidden = true;
+
+  front.append(el('div', 'kanji-zeichen', currentKanji.kanji));
+
+  if (currentKanji.lesung) back.append(el('div', 'kanji-lesung', currentKanji.lesung));
+  back.append(el('div', 'vocab-deutsch' + laengenKlasse(currentKanji.deutsch, 14, 99), currentKanji.deutsch));
+  if (currentKanji.beispiele) {
+    const liste = el('ul', 'kanji-beispiele');
+    currentKanji.beispiele.split('·').map(b => b.trim()).filter(Boolean)
+      .forEach(b => liste.append(el('li', '', b)));
+    back.append(liste);
+  }
+  if (currentKanji.notiz) back.append(el('div', 'vocab-notiz muted', currentKanji.notiz));
+
+  $('#kanji-actions').hidden = false;
+  $('#kanji-grade').hidden = true;
+  $('#kanji-flip').focus();
+}
+
+function flipKanji() {
+  if (!currentKanji) return;
+  $('#kanji-back').hidden = false;
+  $('#kanji-actions').hidden = true;
+  $('#kanji-grade').hidden = false;
+  $('#kanji-known').focus();
+}
+
+function gradeKanjiCard(richtig) {
+  if (!currentKanji || $('#kanji-back').hidden) return;
+  gradeVocab(vocabId(currentKanji), richtig, 'kanji');
+  updateKanjiHint();
+  renderHeader();
+  nextKanjiCard();
+}
+
 // ------------------------------------------------------------- Schreibübung
 
 function initWriting() {
@@ -805,6 +964,19 @@ document.addEventListener('keydown', e => {
   if (e.key === '2') { e.preventDefault(); gradeVocabCard(false); }
 });
 
+/* Kanjikarten: dieselben Tasten wie bei den Vokabeln. */
+document.addEventListener('keydown', e => {
+  if ($('#view-kanji').hidden || document.activeElement.tagName === 'INPUT') return;
+
+  if (e.key === ' ' || e.key === 'Enter') {
+    if (!$('#kanji-actions').hidden) { e.preventDefault(); flipKanji(); }
+    return;
+  }
+  if ($('#kanji-grade').hidden) return;
+  if (e.key === '1') { e.preventDefault(); gradeKanjiCard(true); }
+  if (e.key === '2') { e.preventDefault(); gradeKanjiCard(false); }
+});
+
 document.addEventListener('keydown', e => {
   if ($('#view-session').hidden) return;
   const box = $('#question');
@@ -835,6 +1007,7 @@ function init() {
       if (b.dataset.view === 'home') renderHome();
       if (b.dataset.view === 'words') renderWords();
       if (b.dataset.view === 'vocab') renderVocab();
+      if (b.dataset.view === 'kanji') renderKanji();
       show(b.dataset.view);
     };
   });
@@ -844,6 +1017,14 @@ function init() {
   $('#vocab-flip').onclick = flipVocab;
   $('#vocab-known').onclick = () => gradeVocabCard(true);
   $('#vocab-unknown').onclick = () => gradeVocabCard(false);
+
+  $('#kanji-flip').onclick = flipKanji;
+  $('#kanji-known').onclick = () => gradeKanjiCard(true);
+  $('#kanji-unknown').onclick = () => gradeKanjiCard(false);
+
+  document.querySelectorAll('#fokus button').forEach(b => {
+    b.onclick = () => setzeFokus(b.dataset.fokus);
+  });
 
   $('#btn-start').onclick = () => startSession();
   $('#btn-free').onclick = startFreePractice;

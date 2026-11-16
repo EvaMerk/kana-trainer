@@ -85,6 +85,14 @@ nav button {
   margin-bottom: -1px;
 }
 nav button.active { color: var(--ink); border-bottom-color: var(--accent); }
+/* Fünf Reiter passen auf dem iPhone nur mit weniger Innenabstand in eine Zeile */
+@media (max-width: 480px) {
+  nav { gap: 0; justify-content: space-between; }
+  nav button { padding: 8px 6px; }
+}
+@media (max-width: 350px) {
+  nav button { padding: 8px 3px; font-size: 13px; }
+}
 
 main {
   max-width: 720px;
@@ -131,6 +139,41 @@ button.small { font-size: 13px; padding: 6px 12px; }
 button:disabled { opacity: .55; cursor: default; }
 
 .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+
+/* ----------------------------------------------------- Schwerpunkt-Auswahl */
+
+.fokus {
+  display: flex;
+  gap: 0;
+  margin: 4px 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.fokus button {
+  flex: 1;
+  background: none;
+  border: none;
+  border-left: 1px solid var(--line);
+  padding: 9px 4px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.fokus button:first-child { border-left: none; }
+.fokus button.active { background: var(--accent); color: #fff; }
+
+.kanji-chip { font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif; }
+.kanji-rueckseite {
+  text-align: center;
+  border-top: 1px solid var(--line);
+  margin-top: 12px;
+  padding-top: 16px;
+}
+.question .kanji-zeichen { text-align: center; }
+.kanji-bewertung { grid-template-columns: 1fr 1fr; margin-top: 16px; }
+.kanji-bewertung .option-text { font-size: 18px; }
 
 /* -------------------------------------------------------------- Kursmodus */
 
@@ -484,6 +527,27 @@ button.option:hover:not(:disabled) { border-color: var(--accent); background: va
 .vocab-deutsch { font-size: 30px; font-weight: 500; }
 
 .btn-row.center { justify-content: center; }
+
+/* ------------------------------------------------------------------ Kanji */
+
+.kanji-zeichen {
+  font-size: 96px;
+  line-height: 1.1;
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+}
+.kanji-lesung {
+  font-size: 24px;
+  color: var(--accent);
+  margin-bottom: 10px;
+  font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+}
+.kanji-beispiele {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 1.7;
+}
 
 /* ---------------------------------------------------------------- Schreiben */
 

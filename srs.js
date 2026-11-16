@@ -20,7 +20,8 @@ const Store = {
       history: {},            // 'YYYY-MM-DD' -> Anzahl beantworteter Karten
       words: {},              // wort -> { seen, correct }
       vocab: {},              // vokabel-id -> { box, due, seen, correct, wrong }
-      settings: { newPerSession: 5, sessionLength: 20, courseOnly: true },
+      kanji: {},              // kanji-id -> wie vocab
+      settings: { newPerSession: 5, sessionLength: 20, courseOnly: true, fokus: 'alle' },
     };
   },
 
@@ -85,7 +86,7 @@ const Store = {
     const ziel = this.merge(lokal);
     let uebernommen = 0;
 
-    for (const feld of ['cards', 'words', 'vocab']) {
+    for (const feld of ['cards', 'words', 'vocab', 'kanji']) {
       ziel[feld] = { ...lokal[feld] };
       for (const [id, fremdeKarte] of Object.entries(fremd[feld])) {
         const eigene = ziel[feld][id];
@@ -153,9 +154,49 @@ function unlockedChars() {
   return ALL_CHARS.filter(c => set.has(c.lesson));
 }
 
+/* Schwerpunkt der Übungsrunde: 'alle', 'hiragana', 'katakana' oder 'kanji'.
+ * Gilt nur für die Runde auf der Übersicht (Üben, Problemzeichen, Freies
+ * Üben) — Lesemodus und Schreiben bleiben davon unberührt. */
+const FOKUS_ARTEN = ['alle', 'hiragana', 'katakana', 'kanji'];
+
+function fokus() {
+  const f = Store.data.settings.fokus;
+  return FOKUS_ARTEN.includes(f) ? f : 'alle';
+}
+
+function kanjiImFokus() {
+  return fokus() === 'alle' || fokus() === 'kanji';
+}
+
+/* Kana-Zeichen für die heutige Runde: die freigeschalteten, gefiltert nach
+ * Schwerpunkt. Bei „Kanji" gibt es keine. */
+function fokusChars() {
+  const f = fokus();
+  if (f === 'kanji') return [];
+  const alle = unlockedChars();
+  return f === 'alle' ? alle : alle.filter(c => c.script === f);
+}
+
+/* Kanji in einer Übungsrunde: dieselben Datensätze wie im Kanji-Reiter,
+ * mit einer Markierung, damit die Runde sie als Karteikarte zeigt. */
+function alsKanjiFrage(k) {
+  return { ...k, typ: 'kanji' };
+}
+
+function weakestKanji(limit = 8) {
+  return vocabList('kanji')
+    .map(k => ({ k, card: Store.data.kanji[vocabId(k)] }))
+    .filter(x => x.card && x.card.seen > 0)
+    .map(x => ({ ...x, rate: x.card.correct / x.card.seen }))
+    .filter(x => x.rate < 1)
+    .sort((a, b) => a.rate - b.rate || b.card.wrong - a.card.wrong)
+    .slice(0, limit)
+    .map(x => alsKanjiFrage(x.k));
+}
+
 /* Fällige Karten: schon mal gesehen und Fälligkeitsdatum erreicht */
 function dueChars(now = Date.now()) {
-  return unlockedChars().filter(c => {
+  return fokusChars().filter(c => {
     const card = Store.data.cards[c.c];
     return card && card.seen > 0 && card.due <= now;
   });
@@ -163,7 +204,7 @@ function dueChars(now = Date.now()) {
 
 /* Noch nie geübte Zeichen aus freigeschalteten Lektionen */
 function newChars() {
-  return unlockedChars().filter(c => {
+  return fokusChars().filter(c => {
     const card = Store.data.cards[c.c];
     return !card || card.seen === 0;
   });
@@ -213,7 +254,7 @@ function distractorPool(script) {
 
 /* Die wackeligsten Zeichen — Basis fürs gezielte Wiederholen */
 function weakestChars(limit = 8) {
-  return unlockedChars()
+  return fokusChars()
     .map(c => ({ ...c, card: Store.data.cards[c.c] }))
     .filter(c => c.card && c.card.seen > 0)
     .map(c => ({ ...c, rate: c.card.correct / c.card.seen }))
@@ -312,36 +353,40 @@ function vocabHomographen(v) {
   return vocabList().filter(a => (a.kana || a.kanji || a.romaji) === seite && a.deutsch !== v.deutsch);
 }
 
-function vocabList() {
+/* Zwei Stapel teilen sich dieselbe Leitner-Logik: 'vocab' (Vokabeln) und
+ * 'kanji'. Jeder hat seinen eigenen Lernstand in Store.data[stapel]. Ohne
+ * Angabe ist immer der Vokabelstapel gemeint. */
+function vocabList(stapel = 'vocab') {
+  if (stapel === 'kanji') return typeof KANJI === 'undefined' ? [] : KANJI;
   return typeof VOCAB === 'undefined' ? [] : VOCAB;
 }
 
-function vocabCardFor(id) {
-  if (!Store.data.vocab[id]) {
-    Store.data.vocab[id] = { box: 0, due: 0, seen: 0, correct: 0, wrong: 0 };
+function vocabCardFor(id, stapel = 'vocab') {
+  if (!Store.data[stapel][id]) {
+    Store.data[stapel][id] = { box: 0, due: 0, seen: 0, correct: 0, wrong: 0 };
   }
-  return Store.data.vocab[id];
+  return Store.data[stapel][id];
 }
 
-function vocabDue(now = Date.now()) {
-  return vocabList().filter(v => {
-    const c = Store.data.vocab[vocabId(v)];
+function vocabDue(stapel = 'vocab', now = Date.now()) {
+  return vocabList(stapel).filter(v => {
+    const c = Store.data[stapel][vocabId(v)];
     return c && c.seen > 0 && c.due <= now;
   });
 }
 
-function vocabNew() {
-  return vocabList().filter(v => {
-    const c = Store.data.vocab[vocabId(v)];
+function vocabNew(stapel = 'vocab') {
+  return vocabList(stapel).filter(v => {
+    const c = Store.data[stapel][vocabId(v)];
     return !c || c.seen === 0;
   });
 }
 
 /* Nächste Vokabel: erst Fälliges, dann Neues. Nie zweimal dieselbe
  * direkt hintereinander, solange es Alternativen gibt. */
-function nextVocab(zuletzt) {
-  let faellig = vocabDue();
-  let neu = vocabNew();
+function nextVocab(zuletzt, stapel = 'vocab') {
+  let faellig = vocabDue(stapel);
+  let neu = vocabNew(stapel);
 
   if (zuletzt && faellig.length + neu.length > 1) {
     faellig = faellig.filter(v => vocabId(v) !== zuletzt);
@@ -351,7 +396,7 @@ function nextVocab(zuletzt) {
   const pool = faellig.length ? faellig : neu;
   if (!pool.length) {
     // Alles gelernt und nichts fällig: trotzdem weiterüben lassen
-    const alle = vocabList().filter(v => vocabId(v) !== zuletzt);
+    const alle = vocabList(stapel).filter(v => vocabId(v) !== zuletzt);
     return alle.length ? alle[Math.floor(Math.random() * alle.length)] : null;
   }
   return pool[Math.floor(Math.random() * pool.length)];
@@ -366,8 +411,8 @@ function vocabDirection(id, modus) {
   return Math.random() < 0.5 ? 'jp-de' : 'de-jp';
 }
 
-function gradeVocab(id, richtig) {
-  const c = vocabCardFor(id);
+function gradeVocab(id, richtig, stapel = 'vocab') {
+  const c = vocabCardFor(id, stapel);
   c.seen += 1;
   if (richtig) {
     c.correct += 1;
@@ -385,15 +430,15 @@ function gradeVocab(id, richtig) {
 }
 
 /* Wie viele Vokabeln sitzen schon sicher? */
-function vocabStats() {
-  const alle = vocabList();
+function vocabStats(stapel = 'vocab') {
+  const alle = vocabList(stapel);
   const gelernt = alle.filter(v => {
-    const c = Store.data.vocab[vocabId(v)];
+    const c = Store.data[stapel][vocabId(v)];
     return c && c.seen > 0;
   });
-  const sicher = gelernt.filter(v => Store.data.vocab[vocabId(v)].box >= 3);
+  const sicher = gelernt.filter(v => Store.data[stapel][vocabId(v)].box >= 3);
   return { gesamt: alle.length, gelernt: gelernt.length, sicher: sicher.length,
-           faellig: vocabDue().length, neu: vocabNew().length };
+           faellig: vocabDue(stapel).length, neu: vocabNew(stapel).length };
 }
 
 /* Lernstreak: aufeinanderfolgende Tage mit mindestens einer Antwort */
@@ -409,12 +454,25 @@ function streak() {
   return count;
 }
 
+/* Neue und fällige Kanji für eine Runde. Bei „Alles" kommen höchstens drei
+ * neue dazu, damit die Kana nicht untergehen; bei „Kanji" so viele wie sonst
+ * neue Zeichen. */
+function kanjiFuerRunde() {
+  if (!kanjiImFokus()) return { due: [], fresh: [] };
+  const maxNeu = fokus() === 'kanji' ? Store.data.settings.newPerSession : 3;
+  return {
+    due: vocabDue('kanji').map(alsKanjiFrage),
+    fresh: vocabNew('kanji').slice(0, maxNeu).map(alsKanjiFrage),
+  };
+}
+
 /* Stellt die Karten für eine Übungsrunde zusammen:
  * erst Fälliges, dann eine Handvoll neuer Zeichen. */
 function buildSession() {
   const { newPerSession, sessionLength } = Store.data.settings;
-  const due = shuffle(dueChars());
-  const fresh = newChars().slice(0, newPerSession);
+  const kanji = kanjiFuerRunde();
+  const due = shuffle([...dueChars(), ...kanji.due]);
+  const fresh = [...newChars().slice(0, newPerSession), ...kanji.fresh];
 
   const queue = [...fresh, ...due].slice(0, sessionLength);
   // Neue Zeichen bewusst nicht ganz am Anfang bündeln

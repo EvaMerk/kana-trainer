@@ -7,7 +7,7 @@
  * Solange der Name gleich bleibt, findet er nichts zum Aufräumen und ein
  * einmal abgelegter Stand kann beliebig lange überleben — genau so hing die
  * alte Wortliste mit 108 Einträgen fest, während die Datei längst 140 hatte. */
-const CACHE = 'kana-trainer-v11';
+const CACHE = 'kana-trainer-v12';
 
 const ASSETS = [
   './',
@@ -17,6 +17,7 @@ const ASSETS = [
   './kurs.js',
   './woerter.js',
   './vokabeln.js',
+  './kanji.js',
   './srs.js',
   './app.js',
   './manifest.json',

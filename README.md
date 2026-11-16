@@ -47,6 +47,16 @@ Zwei Dinge sind eigens fürs iPhone gebaut, weil die Bildschirmhöhe dort knapp 
 - **Die Weiterkommen-Knöpfe kleben unten** (`.weiter` im CSS). Eine Intro-Karte ist rund 500 px hoch, eine Auswertung mit Eselsbrücke ähnlich — ohne das läge der Knopf unterhalb des Displays und man müsste nach jeder Antwort scrollen. `position: sticky` heftet nur innerhalb des sichtbaren Teils des Elternblocks; liegt der ganz unterhalb des Rands, hilft es nicht. Deshalb holt `zeigeAuswertung()` die Auswertung zusätzlich per `scrollIntoView` heran, und `zumSeitenanfang()` setzt vor jeder neuen Frage zurück nach oben.
 - **`enterkeyhint="go"`** auf den Eingabefeldern: Die Taste unten rechts auf der Handytastatur heißt dann „Los" und schickt die Antwort ab. Sonst müsste man den Prüfen-Knopf treffen, den die eingeblendete Tastatur oft verdeckt.
 
+## Schwerpunkt: Alles, Hiragana, Katakana oder Kanji
+
+Oben in „Heutige Runde" wählst du, was geübt wird. **Üben starten**, **Nur Problemzeichen** und **Freies Üben** halten sich daran, ebenso die Zahlen oben (fällig/neu) und „Wo es gerade hakt".
+
+- **Hiragana** / **Katakana**: nur Zeichen dieser Schrift (im Kursmodus aus der Kursauswahl).
+- **Kanji**: nur die Kanji-Karteikarten — dieselben Karten und derselbe Lernstand wie im Kanji-Reiter.
+- **Alles**: Kana und Kanji gemischt; neue Kanji kommen höchstens drei pro Runde dazu, damit die Kana nicht untergehen.
+
+Kanji erscheinen in der Runde als Karteikarte: <kbd>Enter</kbd> dreht um, <kbd>1</kbd> gewusst, <kbd>2</kbd> nicht gewusst. Die Wahl bleibt gespeichert, bis du sie änderst. Lesemodus und Schreiben sind davon nicht betroffen.
+
 ## Kursmodus
 
 Standardmäßig übt der Trainer **nur die Zeichen, die im Kurs schon dran waren**. Welche das sind, steht in `kurs.js` und wird aus den Übungsblättern in `kursmaterial/` abgeleitet.
@@ -105,6 +115,20 @@ Nicht alle Spalten müssen gefüllt sein — nötig sind nur eine japanische Sei
 
 **Gleich geschriebene Vokabeln** (さん heißt „drei" *und* „Herr/Frau") bekommen getrennte Lernstände. Bei der Abfrage Japanisch → Deutsch wird die `notiz` als Unterscheidungshilfe eingeblendet — sonst wäre die Frage nicht beantwortbar. Deshalb bei solchen Paaren immer eine Notiz setzen.
 
+## Kanji
+
+Eigener Reiter **Kanji**: Karteikarten, nur in eine Richtung — das Kanji steht da, du überlegst Lesung und Bedeutung, drehst um und bewertest dich selbst. Schreiben wird nicht abgefragt. Dieselben Leitner-Boxen wie bei den Vokabeln, aber ein eigener Lernstand (`kanji` im `localStorage`, wird beim Abgleich Mac/iPhone mit zusammengeführt).
+
+Die Kanji stehen in `kursmaterial/Kanji/kanji.tsv`, eins pro Zeile:
+
+```
+日 ; に、にち、ひ、じつ、か ; Sonne, Tag ; 日本 (にほん) Japan · 日本語 (にほんご) Japanisch
+```
+
+Spalten: `kanji ; lesung ; deutsch ; beispiele ; notiz`. Mehrere Beispiele mit `·` trennen (das `;` ist ja schon Trennzeichen). `vokabeln-aktualisieren.py` liest den Ordner mit und schreibt `trainer/kanji.js`.
+
+Neue Kanji-Übungsblätter: in `kursmaterial/` legen und mir Bescheid sagen, ich trage sie ein.
+
 ## Zwei Arten von Merkhilfen
 
 Zu jedem Zeichen steht in `kana-data.js` eine Eselsbrücke zur **Form** (`m`, „は ist ein Haus mit Leiter"). Zeichen, die im Kurs dran waren, haben zusätzlich die Merkhilfe aus dem Lehrbuch (`km`), die auf den **Klang** zielt („Hanna" → ha). Die App zeigt beide — im Unterricht fällt die zweite Variante.
@@ -153,6 +177,7 @@ Es startet nur die a-Reihe freigeschaltet. Schalte die nächste Lektion frei, we
 
 - `kana-data.js` — alle Zeichen mit deutschen Eselsbrücken und Verwechslungspaaren
 - `srs.js` — Leitner-Logik und Speicherung (`localStorage`)
+- `vokabeln.js`, `kanji.js` — Karteikarten, erzeugt von `vokabeln-aktualisieren.py`
 - `app.js` — Oberfläche und Übungsablauf
 - `index.html`, `style.css`
 

@@ -36,6 +36,7 @@
     <button data-view="home" class="active">Übersicht</button>
     <button data-view="words">Wörter</button>
     <button data-view="vocab">Vokabeln</button>
+    <button data-view="kanji">Kanji</button>
     <button data-view="write">Schreiben</button>
   </nav>
 </header>
@@ -46,6 +47,13 @@
   <section id="view-home" class="view">
     <div class="card hero">
       <h2>Heutige Runde</h2>
+
+      <div id="fokus" class="fokus" role="group" aria-label="Was heute üben?">
+        <button data-fokus="alle">Alles</button>
+        <button data-fokus="hiragana">Hiragana</button>
+        <button data-fokus="katakana">Katakana</button>
+        <button data-fokus="kanji">Kanji</button>
+      </div>
 
       <label class="switch">
         <input type="checkbox" id="toggle-course" checked>
@@ -171,6 +179,32 @@
     </div>
   </section>
 
+  <!-- --------------------------------------------------------------- Kanji -->
+  <section id="view-kanji" class="view" hidden>
+    <div class="card">
+      <h2>Kanji</h2>
+      <p id="kanji-hint" class="muted"></p>
+
+      <div id="kanji-panel">
+        <div class="vocab-card">
+          <div class="prompt-label">Lesung und Bedeutung?</div>
+          <div id="kanji-front" class="vocab-side"></div>
+          <div id="kanji-back" class="vocab-side back" hidden></div>
+        </div>
+
+        <div id="kanji-actions" class="btn-row center">
+          <button id="kanji-flip" class="primary">Umdrehen</button>
+        </div>
+        <div id="kanji-grade" class="btn-row center" hidden>
+          <button id="kanji-known" class="primary">Gewusst</button>
+          <button id="kanji-unknown" class="ghost">Nicht gewusst</button>
+        </div>
+
+        <p class="hint"><kbd>Leertaste</kbd> dreht um, <kbd>1</kbd> gewusst, <kbd>2</kbd> nicht gewusst.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ----------------------------------------------------------- Schreiben -->
   <section id="view-write" class="view" hidden>
     <div class="card">
@@ -196,6 +230,7 @@
 <script src="kurs.js"></script>
 <script src="woerter.js"></script>
 <script src="vokabeln.js"></script>
+<script src="kanji.js"></script>
 <script src="srs.js"></script>
 <script src="app.js"></script>
 <script>

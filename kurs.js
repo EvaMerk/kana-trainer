@@ -6,21 +6,26 @@
 const COURSE_CHARS = [
   'あ',      // aus 50hiragana-a-.pdf
   'い',      // aus 50hiragana-i-.pdf
+  'う',      // aus 50hiragana-u-.pdf
   'え',      // aus 50hiragana-e-.pdf
   'お',      // aus 50hiragana-o-.pdf
   'か',      // aus 50hiragana-ka-.pdf
+  'き',      // aus 50hiragana-ki-.pdf
   'く',      // aus 50hiragana-ku-.pdf
   'こ',      // aus 50hiragana-ko-.pdf
   'さ',      // aus 50hiragana-sa-.pdf
   'し',      // aus 50hiragana-si-.pdf
   'す',      // aus 50hiragana-su.pdf
   'せ',      // aus 50hiragana-se.pdf
+  'そ',      // aus 50hiragana-so-.pdf
   'た',      // aus 50hiragana-ta-.pdf
   'ち',      // aus 50hiragana-ti.pdf
+  'つ',      // aus weitere-zeichen.txt
   'て',      // aus 50hiragana-te.pdf
   'と',      // aus 50hiragana-to.pdf
   'な',      // aus 50hiragana-na.pdf
   'に',      // aus 50hiragana-ni.pdf
+  'ね',      // aus 50hiragana-ne.pdf
   'の',      // aus 50hiragana-no.pdf
   'は',      // aus 50hiragana-ha.pdf
   'ま',      // aus 50hiragana-ma.pdf
@@ -28,17 +33,38 @@ const COURSE_CHARS = [
   'め',      // aus 50hiragana-me.pdf
   'も',      // aus 50hiragana-mo.pdf
   'や',      // aus 50hiragana-ya.pdf
+  'ゆ',      // aus 50hiragana-yu.pdf
   'よ',      // aus 50hiragana-yo.pdf
+  'ら',      // aus 50hiragana-ra.pdf
+  'り',      // aus 50hiragana-ri.pdf
   'る',      // aus 50hiragana-ru.pdf
+  'れ',      // aus weitere-zeichen.txt
+  'ろ',      // aus 50hiragana-ro.pdf
   'ん',      // aus 50hiragana-nn.pdf
   'イ',      // aus katakana-i.pdf
+  'カ',      // aus katakana-ka.pdf
   'ス',      // aus katakana-su.pdf
   'ツ',      // aus katakana-tu.pdf
   'ト',      // aus katakana-to.pdf
+  'ハ',      // aus katakana-ha.pdf
+  'マ',      // aus katakana-ma.pdf
+  'ン',      // aus katakana-nn.pdf
   'じ',      // aus weitere-zeichen.txt
   'で',      // aus weitere-zeichen.txt
   'ず',      // aus weitere-zeichen.txt
   'ざ',      // aus weitere-zeichen.txt
   'ご',      // aus weitere-zeichen.txt
   'ぐ',      // aus weitere-zeichen.txt
+  'が',      // aus weitere-zeichen.txt
+  'ぜ',      // aus weitere-zeichen.txt
+  'ば',      // aus weitere-zeichen.txt
+  'ぱ',      // aus weitere-zeichen.txt
+  'ド',      // aus weitere-zeichen.txt
+  'ズ',      // aus weitere-zeichen.txt
+  'ど',      // aus weitere-zeichen.txt
+  'バ',      // aus weitere-zeichen.txt
+  'パ',      // aus weitere-zeichen.txt
+  'ぞ',      // aus weitere-zeichen.txt
+  'ぎ',      // aus weitere-zeichen.txt
+  'ガ',      // aus weitere-zeichen.txt
 ];
