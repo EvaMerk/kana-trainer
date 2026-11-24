@@ -1,7 +1,7 @@
 /* Automatisch erzeugt von vokabeln-aktualisieren.py — nicht von Hand ändern.
  *
  * Quelle: kursmaterial/Vokabeln/
- * Stand: 154 Vokabeln aus 27 Datei(en). */
+ * Stand: 174 Vokabeln aus 28 Datei(en). */
 
 const VOCAB = [
   { kana: 'か', romaji: 'ka', deutsch: 'Fragepartikel', notiz: 'Am Satzende mit steigender Betonung macht か eine Aussage zur Frage', quelle: 'IMG_4197.tsv' },
@@ -100,6 +100,26 @@ const VOCAB = [
   { kana: 'さようなら', romaji: 'sayounara', deutsch: 'Auf Wiedersehen!', notiz: 'Oft verkürzt さよなら', quelle: 'IMG_4592.tsv' },
   { kana: 'おやすみなさい', romaji: 'oyasuminasai', deutsch: 'Gute Nacht! Schlaf gut!', notiz: 'Auch Abschiedsgruß spätabends', quelle: 'IMG_4592.tsv' },
   { kana: 'バイバイ', romaji: 'baibai', deutsch: 'Tschüss', notiz: 'Sehr informeller Abschiedsgruß', quelle: 'IMG_4592.tsv' },
+  { kana: 'どうも', romaji: 'doumo', deutsch: 'Danke! (informell)', notiz: 'Allein als Dank — nicht das verstärkende どうも aus どうも すみません', quelle: 'IMG_4664.tsv' },
+  { kana: 'これ', romaji: 'kore', deutsch: 'das hier', notiz: 'Nah bei mir (der Sprecherin)', quelle: 'IMG_4664.tsv' },
+  { kana: 'それ', romaji: 'sore', deutsch: 'das da (bei Ihnen)', notiz: 'Nah beim Gegenüber', quelle: 'IMG_4664.tsv' },
+  { kana: 'あれ', romaji: 'are', deutsch: 'das da drüben', notiz: 'Weit weg von beiden', quelle: 'IMG_4664.tsv' },
+  { kana: 'どれ', romaji: 'dore', deutsch: 'welches, welcher, welche', quelle: 'IMG_4664.tsv' },
+  { kana: 'かし', romaji: 'kashi', deutsch: 'Süßigkeit', kanji: 'お菓子', notiz: 'Meist höflich: おかし', quelle: 'IMG_4664.tsv' },
+  { kana: 'みやげ', romaji: 'miyage', deutsch: 'Souvenir, Mitbringsel', kanji: 'お土産', notiz: 'Meist höflich: おみやげ', quelle: 'IMG_4664.tsv' },
+  { kana: 'ともだち', romaji: 'tomodachi', deutsch: 'Freund, Freundin', kanji: '友達', quelle: 'IMG_4664.tsv' },
+  { kana: 'おいしい', romaji: 'oishii', deutsch: 'gut schmeckend, lecker', quelle: 'IMG_4664.tsv' },
+  { kana: 'おいしそう', romaji: 'oishisou', deutsch: 'schmackhaft aussehend, appetitlich', quelle: 'IMG_4664.tsv' },
+  { kana: 'よ', romaji: 'yo', deutsch: '(Schlusspartikel) Behauptung, Verstärkung der Aussage', notiz: 'Am Satzende: …ですよ', quelle: 'IMG_4664.tsv' },
+  { kana: 'どこ', romaji: 'doko', deutsch: 'wo, welcher Ort', quelle: 'IMG_4664.tsv' },
+  { kana: 'おんせん', romaji: 'onsen', deutsch: 'heiße Quellen, Onsen', kanji: '温泉', quelle: 'IMG_4664.tsv' },
+  { kana: 'たまご', romaji: 'tamago', deutsch: 'Ei, Laich', kanji: '卵', quelle: 'IMG_4664.tsv' },
+  { kana: 'ゆかた', romaji: 'yukata', deutsch: 'Kimono aus Baumwolle (Sommerkimono)', kanji: '浴衣', quelle: 'IMG_4664.tsv' },
+  { kana: 'なつ', romaji: 'natsu', deutsch: 'Sommer', kanji: '夏', quelle: 'IMG_4664.tsv' },
+  { kana: 'きもの', romaji: 'kimono', deutsch: 'Kimono (traditionelle japanische Kleidung)', kanji: '着物', quelle: 'IMG_4664.tsv' },
+  { kana: 'きれい', romaji: 'kirei', deutsch: 'schön, hübsch', notiz: 'Für Aussehen und Klang', quelle: 'IMG_4664.tsv' },
+  { kana: 'ね', romaji: 'ne', deutsch: '(Schlusspartikel) Einvernehmen', notiz: 'Mit FALLENDER Betonung (↘) — nicht das fragende ね (↗)', quelle: 'IMG_4664.tsv' },
+  { kana: 'いくら', romaji: 'ikura', deutsch: 'wie teuer, welcher Preis', notiz: 'いくらですか = Wie viel kostet das?', quelle: 'IMG_4664.tsv' },
   { kana: 'イギリス', romaji: 'igirisu', deutsch: 'England, Großbritannien', quelle: 'LÄNDERNAMEN.tsv' },
   { kana: 'スペイン', romaji: 'supein', deutsch: 'Spanien', quelle: 'LÄNDERNAMEN.tsv' },
   { kana: 'イタリア', romaji: 'itaria', deutsch: 'Italien', quelle: 'LÄNDERNAMEN.tsv' },

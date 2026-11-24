@@ -12,6 +12,7 @@ const COURSE_CHARS = [
   'か',      // aus 50hiragana-ka-.pdf
   'き',      // aus 50hiragana-ki-.pdf
   'く',      // aus 50hiragana-ku-.pdf
+  'け',      // aus 50hiragana-ke-.pdf
   'こ',      // aus 50hiragana-ko-.pdf
   'さ',      // aus 50hiragana-sa-.pdf
   'し',      // aus 50hiragana-si-.pdf
@@ -20,7 +21,7 @@ const COURSE_CHARS = [
   'そ',      // aus 50hiragana-so-.pdf
   'た',      // aus 50hiragana-ta-.pdf
   'ち',      // aus 50hiragana-ti.pdf
-  'つ',      // aus weitere-zeichen.txt
+  'つ',      // aus 50hiragana-tu.pdf
   'て',      // aus 50hiragana-te.pdf
   'と',      // aus 50hiragana-to.pdf
   'な',      // aus 50hiragana-na.pdf
@@ -28,6 +29,7 @@ const COURSE_CHARS = [
   'ね',      // aus 50hiragana-ne.pdf
   'の',      // aus 50hiragana-no.pdf
   'は',      // aus 50hiragana-ha.pdf
+  'ひ',      // aus 50hiragana-hi.pdf
   'ま',      // aus 50hiragana-ma.pdf
   'み',      // aus 50hiragana-mi-.pdf
   'め',      // aus 50hiragana-me.pdf
@@ -38,7 +40,7 @@ const COURSE_CHARS = [
   'ら',      // aus 50hiragana-ra.pdf
   'り',      // aus 50hiragana-ri.pdf
   'る',      // aus 50hiragana-ru.pdf
-  'れ',      // aus weitere-zeichen.txt
+  'れ',      // aus 50hiragana-re.pdf
   'ろ',      // aus 50hiragana-ro.pdf
   'ん',      // aus 50hiragana-nn.pdf
   'イ',      // aus katakana-i.pdf
